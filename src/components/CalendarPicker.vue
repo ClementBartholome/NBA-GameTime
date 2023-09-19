@@ -100,14 +100,18 @@ export default {
       const month = this.selectedDate.getMonth()
       const lastDay = new Date(year, month + 1, 0)
       const daysInMonth = lastDay.getDate()
-      const firstDay = new Date(year, month, 1)
-      const startOffset = firstDay.getDay() // Offset for the first day of the month
+
+      // Ajout de cette ligne pour ajuster au fuseau horaire local
+      const firstDay = new Date(Date.UTC(year, month, 1))
+
+      const startOffset = firstDay.getUTCDay() // Utiliser getUTCDay pour le jour de la semaine
 
       this.calendar = []
       let week: Date[] = []
 
       for (let day = 1 - startOffset; day <= daysInMonth; day++) {
-        const currentDate = new Date(year, month, day)
+        // Ajout de cette ligne pour ajuster au fuseau horaire local
+        const currentDate = new Date(Date.UTC(year, month, day))
         week.push(currentDate)
         if (week.length === 7) {
           this.calendar.push(week)

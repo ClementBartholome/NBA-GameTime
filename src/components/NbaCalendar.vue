@@ -4,6 +4,7 @@
     <div class="calendar-input">
       <label for="calendar-input" class="calendar-icon" @click="toggleCalendar">
         <i class="far fa-calendar"></i>
+        <span>{{ currentMonth }}</span>
       </label>
       <input
         type="text"
@@ -62,6 +63,11 @@ export default {
       const year = dateObj.getFullYear()
 
       return `${day}-${month}-${year}` // Contains the formatted current date.
+    },
+    currentMonth() {
+      const dateObj = new Date(this.currentDate)
+      // Utilisez 'fr-FR' pour le français ou 'en-US' pour l'anglais, par exemple
+      return dateObj.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })
     }
   },
   mounted() {
