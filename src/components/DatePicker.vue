@@ -2,7 +2,13 @@
   <!-- DatePicker -->
   <div class="date-picker">
     <button @click="$emit('prevWeek')">&lt;</button>
-    <div class="day-button" v-for="day in selectedWeek" :key="day" @click="selectDay(day)">
+    <div
+      class="day-button"
+      v-for="day in selectedWeek"
+      :key="day"
+      @click="selectDay(day)"
+      :class="{ selected: isDateSelected(day), active: day === formattedDate }"
+    >
       {{ day }}
     </div>
     <button @click="$emit('nextWeek')">&gt;</button>
@@ -12,11 +18,14 @@
 <script lang="ts">
 export default {
   props: {
-    selectedWeek: Array as () => string[]
+    selectedWeek: Array as () => string[],
+    formattedDate: String
   },
   methods: {
+    isDateSelected(day: string) {
+      return day === this.formattedDate
+    },
     selectDay(day: string) {
-      // Emits the selectDay event with the selected day
       console.log(day)
       this.$emit('selectDay', day)
     }
@@ -44,5 +53,13 @@ export default {
 }
 .day-button:hover {
   opacity: 0.7;
+}
+.selected {
+  background-color: #007bff;
+  color: #fff;
+}
+.active {
+  background-color: #f0f0f0;
+  color: #000;
 }
 </style>

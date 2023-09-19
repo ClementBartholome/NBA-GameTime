@@ -23,6 +23,7 @@
 
     <date-picker
       :selectedWeek="selectedWeek"
+      :formattedDate="formattedDate"
       @selectDay="selectDay"
       @prevWeek="prevWeek"
       @nextWeek="nextWeek"
@@ -49,7 +50,7 @@ export default {
   data() {
     return {
       games: [] as any[], // Contains NBA game data, initially an empty array.
-      currentDate: '2023-10-25', // Contains the current date in 'YYYY-MM-DD' format.
+      currentDate: '2023-10-24', // Contains the current date in 'YYYY-MM-DD' format.
       selectedWeek: [] as string[], // Contains the selected week's days as strings.
       showCalendar: false // A boolean to control the visibility of the calendar.
     }
@@ -58,11 +59,9 @@ export default {
     // Format the current date for display
     formattedDate() {
       const dateObj = new Date(this.currentDate)
-      const day = dateObj.getDate()
-      const month = dateObj.getMonth() + 1
-      const year = dateObj.getFullYear()
-
-      return `${day}-${month}-${year}` // Contains the formatted current date.
+      const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' }) // Utilisez 'fr-FR' pour le français
+      const dayOfMonth = dateObj.getDate()
+      return `${dayOfWeek} ${dayOfMonth}`
     },
     currentMonth() {
       const dateObj = new Date(this.currentDate)
