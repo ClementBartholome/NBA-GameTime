@@ -1,10 +1,9 @@
 <template>
-  <div>
-    <h1>Calendrier NBA</h1>
+  <section class="calendar">
     <div class="calendar-input">
       <label for="calendar-input" class="calendar-icon" @click="toggleCalendar">
-        <i class="far fa-calendar"></i>
         <span>{{ currentMonth }}</span>
+        <i class="far fa-calendar"></i>
       </label>
       <input
         type="text"
@@ -31,42 +30,44 @@
 
     <ul>
       <li v-for="game in games" :key="game.id">
-        {{ game.home_team.full_name }} vs {{ game.visitor_team.full_name }}
+        <GameCard :game="game" />
       </li>
     </ul>
-  </div>
+  </section>
 </template>
 
 <script lang="ts">
 import axios from 'axios'
 import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
+import GameCard from './GameCard.vue'
 
 export default {
   components: {
     DatePicker,
-    CalendarPicker
+    CalendarPicker,
+    GameCard
   },
   data() {
     return {
-      games: [] as any[], // Contains NBA game data, initially an empty array.
-      currentDate: '2023-10-24', // Contains the current date in 'YYYY-MM-DD' format.
-      selectedWeek: [] as string[], // Contains the selected week's days as strings.
-      showCalendar: false // A boolean to control the visibility of the calendar.
+      games: [] as any[], // Data for the NBA games.
+      currentDate: '2023-10-24', // Actual date.
+      selectedWeek: [] as string[], // The days of the week that is selected.
+      showCalendar: false // Boolean to show or hide the calendar.
     }
   },
   computed: {
     // Format the current date for display
     formattedDate() {
       const dateObj = new Date(this.currentDate)
-      const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' }) // Utilisez 'fr-FR' pour le français
+      const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
       const dayOfMonth = dateObj.getDate()
       return `${dayOfWeek} ${dayOfMonth}`
     },
     currentMonth() {
       const dateObj = new Date(this.currentDate)
-      // Utilisez 'fr-FR' pour le français ou 'en-US' pour l'anglais, par exemple
-      return dateObj.toLocaleDateString('fr-FR', { year: 'numeric', month: 'long' })
+
+      return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
     }
   },
   mounted() {
@@ -186,15 +187,27 @@ export default {
   cursor: pointer;
 }
 
+section.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
 .calendar-input {
   display: flex;
   align-items: center;
+  justify-content: center;
 }
 
 .calendar-icon {
   margin-right: 10px; /* Adjust the spacing between the icon and input field as needed */
   font-size: 1.25rem; /* Adjust the icon size as needed */
   color: #888; /* Adjust the icon color as needed */
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 4rem;
 }
 
 #calendar-input {
