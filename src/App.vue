@@ -1,15 +1,5 @@
 <template>
-  <div id="app">
-    <NbaCalendar />
-  </div>
+  <router-view></router-view>
 </template>
 
-<script lang="ts">
-import NbaCalendar from './components/NbaCalendar.vue'
-
-export default {
-  components: {
-    NbaCalendar
-  }
-}
-</script>
+<script setup lang="ts"></script>
