@@ -3,10 +3,22 @@
     <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
       <img :src="homeTeamLogo" alt="Home team logo" />
       <h2>{{ game.home_team.full_name }}</h2>
+      <span
+        class="score"
+        v-if="game.home_team_score > 0"
+        :class="{ winner: isHomeWinner(game.home_team_score, game.visitor_team_score) }"
+        >{{ game.home_team_score }}</span
+      >
     </div>
     <div class="away-team" :style="{ backgroundColor: visitorTeamColor }">
       <img :src="visitorTeamLogo" alt="Visiting team logo" />
       <h2>{{ game.visitor_team.full_name }}</h2>
+      <span
+        class="score"
+        v-if="game.visitor_team_score > 0"
+        :class="{ winner: isAwayWinner(game.home_team_score, game.visitor_team_score) }"
+        >{{ game.visitor_team_score }}</span
+      >
     </div>
   </div>
 </template>
@@ -44,6 +56,14 @@ export default {
       homeTeamColor,
       visitorTeamColor
     }
+  },
+  methods: {
+    isHomeWinner(homeScore: number, awayScore: number) {
+      return homeScore > awayScore
+    },
+    isAwayWinner(homeScore: number, awayScore: number) {
+      return awayScore > homeScore
+    }
   }
 }
 </script>
@@ -62,11 +82,15 @@ export default {
   transition: transform 0.2s ease-in-out;
 }
 
+.game-card h2 {
+  font-size: 1.3rem;
+}
+
 .game-card img {
   background-color: white;
   padding: 0.5rem;
   height: 100px;
-  width: 150px;
+  width: 130px;
   border-radius: 20px;
 }
 
@@ -82,5 +106,13 @@ export default {
 
 .game-card:hover {
   transform: scale(1.02);
+}
+
+.score {
+  font-size: 1.5rem;
+}
+
+.winner {
+  font-weight: 700;
 }
 </style>
