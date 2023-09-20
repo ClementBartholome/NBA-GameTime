@@ -53,7 +53,7 @@ export default {
       // Recalculate the calendar for the new month
       this.calculateCalendar()
       // Update currentMonth
-      this.currentMonth = this.selectedDate.toLocaleString(undefined, {
+      this.currentMonth = this.selectedDate.toLocaleString('en-US', {
         year: 'numeric',
         month: 'long'
       })
@@ -63,7 +63,7 @@ export default {
     // Calculate the initial calendar
     this.calculateCalendar()
     // Set currentMonth initially
-    this.currentMonth = this.selectedDate.toLocaleString(undefined, {
+    this.currentMonth = this.selectedDate.toLocaleString('en-US', {
       year: 'numeric',
       month: 'long'
     })
@@ -81,7 +81,7 @@ export default {
       this.selectedDate.setMonth(this.selectedDate.getMonth() - 1)
       this.calculateCalendar()
       // Update currentMonth
-      this.currentMonth = this.selectedDate.toLocaleString(undefined, {
+      this.currentMonth = this.selectedDate.toLocaleString('en-US', {
         year: 'numeric',
         month: 'long'
       })
@@ -90,7 +90,7 @@ export default {
       this.selectedDate.setMonth(this.selectedDate.getMonth() + 1)
       this.calculateCalendar()
       // Update currentMonth
-      this.currentMonth = this.selectedDate.toLocaleString(undefined, {
+      this.currentMonth = this.selectedDate.toLocaleString('en-US', {
         year: 'numeric',
         month: 'long'
       })
@@ -130,6 +130,14 @@ export default {
 <style scoped>
 .calendar-picker {
   text-align: center;
+  position: absolute;
+  top: 120px;
+  right: 542px;
+  border: 1px solid #ccc;
+  z-index: 999;
+  background-color: #f0f0f0;
+  color: black;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .calendar-header {
@@ -137,6 +145,11 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1rem;
+}
+
+.calendar-header button {
+  border: none;
+  font-size: 1.2rem;
 }
 
 .calendar-table {
@@ -152,7 +165,8 @@ export default {
 
 .calendar-table td:hover {
   cursor: pointer;
-  background-color: #f0f0f0;
+  background-color: #007bff;
+  color: #fff;
 }
 
 .calendar-table .selected {
