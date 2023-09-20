@@ -21,6 +21,8 @@
             <th>Wins</th>
             <th>Losses</th>
             <th>Win %</th>
+            <th>Last 10</th>
+            <th>Streak</th>
           </tr>
         </thead>
         <tbody>
@@ -33,6 +35,10 @@
             <td>{{ team.Wins }}</td>
             <td>{{ team.Losses }}</td>
             <td>{{ team.Percentage }}</td>
+            <td>{{ team.LastTenWins }} - {{ team.LastTenLosses }}</td>
+            <td>
+              {{ team.Streak > 0 ? 'W' + team.Streak : 'L' + Math.abs(team.Streak) }}
+            </td>
           </tr>
         </tbody>
       </table>
@@ -52,6 +58,9 @@ interface TeamStandings {
   Wins: number
   Losses: number
   Percentage: number
+  LastTenWins: number
+  LastTenLosses: number
+  Streak: number
 }
 
 // Define and initialize reactive variables
@@ -105,8 +114,8 @@ const sortedStandings = computed(() => {
 }
 
 .team-logo {
-  height: 50px;
-  width: 50px;
+  height: 60px;
+  width: 60px;
   background: white;
   padding: 0.5rem;
   border-radius: 50%;
