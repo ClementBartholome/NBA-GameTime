@@ -51,7 +51,7 @@ export default {
   data() {
     return {
       games: [] as any[], // Data for the NBA games.
-      currentDate: '2023-10-24', // Actual date.
+      currentDate: '2023-05-21', // Base date
       selectedWeek: [] as string[], // The days of the week that is selected.
       showCalendar: false // Boolean to show or hide the calendar.
     }
