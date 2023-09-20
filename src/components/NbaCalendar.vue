@@ -28,7 +28,7 @@
       @nextWeek="nextWeek"
     />
 
-    <ul>
+    <ul class="game-list">
       <li v-for="game in games" :key="game.id">
         <GameCard :game="game" />
       </li>
@@ -212,5 +212,10 @@ section.calendar {
 
 #calendar-input {
   display: none; /* Hide the input field */
+}
+
+.game-list {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

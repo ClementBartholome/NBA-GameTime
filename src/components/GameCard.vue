@@ -1,11 +1,11 @@
 <template>
   <div class="game-card" v-if="game">
     <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
-      <img :src="homeTeamLogo" alt="Logo de l'équipe domicile" />
+      <img :src="homeTeamLogo" alt="Home team logo" />
       <h2>{{ game.home_team.full_name }}</h2>
     </div>
     <div class="away-team" :style="{ backgroundColor: visitorTeamColor }">
-      <img :src="visitorTeamLogo" alt="Logo de l'équipe visiteur" />
+      <img :src="visitorTeamLogo" alt="Visiting team logo" />
       <h2>{{ game.visitor_team.full_name }}</h2>
     </div>
   </div>
@@ -77,7 +77,7 @@ export default {
   align-items: center;
   padding: 1rem;
   border-radius: 5px;
-  width: 300px;
+  width: 275px;
 }
 
 .game-card:hover {
