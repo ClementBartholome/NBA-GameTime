@@ -5,6 +5,8 @@ interface TeamInfo {
   primaryColor: string
 }
 
+const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
+
 // Get team information by name
 export async function getTeamInfo(teamName: string) {
   // Check if team info is already stored in localStorage
@@ -18,7 +20,7 @@ export async function getTeamInfo(teamName: string) {
   try {
     // Fetch team data from the API
     const response = await axios.get(
-      `https://api.sportsdata.io/v3/nba/scores/json/teams?key=c8d641b0d5f54e6ba908f0066da32747`
+      `https://api.sportsdata.io/v3/nba/scores/json/teams?key=${apiKey}`
       // 1000 calls per month limit
     )
 
@@ -64,7 +66,7 @@ export async function getStandings(season: number) {
   try {
     // Fetch NBA standings data from the API for the specified season
     const response = await axios.get(
-      `https://api.sportsdata.io/v3/nba/scores/json/Standings/${season}?key=c8d641b0d5f54e6ba908f0066da32747`
+      `https://api.sportsdata.io/v3/nba/scores/json/Standings/${season}?key=${apiKey}`
       // Note: 1000 calls per month limit
     )
 
