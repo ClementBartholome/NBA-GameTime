@@ -7,7 +7,7 @@
       v-for="day in selectedWeek"
       :key="day"
       @click="selectDay(day)"
-      :class="{ selected: isDateSelected(day), active: day === formattedDate }"
+      :class="{ selected: isDateSelected(day) }"
     >
       {{ day }}
     </div>
