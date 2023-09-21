@@ -1,5 +1,5 @@
 export function getSingleBoxScore(gamesData: any, homeTeamName: string, awayTeamName: string) {
-  // Utilisez la méthode filter pour filtrer les jeux en fonction du nom des équipes à domicile et à l'extérieur.
+  // Filter method to find the game that matches the home and away team names
   const filteredGames = gamesData.filter((game: any) => {
     // console.log(game)
     return (

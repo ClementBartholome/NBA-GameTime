@@ -40,7 +40,7 @@
 import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
-import { fetchGames, getBoxScores } from '../util/NbaApi' //
+import { fetchGames, getBoxScores } from '../util/NbaApi'
 
 export default {
   components: {
@@ -91,6 +91,7 @@ export default {
     },
     async updateGamesBoxScores(date: string) {
       const gamesBoxScores = await getBoxScores(date)
+      console.log(gamesBoxScores)
       this.gamesBoxScores = gamesBoxScores
     },
     updateSelectedWeek() {

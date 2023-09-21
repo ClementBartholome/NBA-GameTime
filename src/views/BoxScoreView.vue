@@ -1,3 +1,25 @@
 <template>
-  <h1>Test</h1>
+  <AppHeader />
+  <main>
+    <h1>Box Score pour le match {{ gameId }}</h1>
+    <BoxScore />
+  </main>
 </template>
+
+<script lang="ts">
+import BoxScore from '../components/BoxScore.vue'
+import AppHeader from '../components/AppHeader.vue'
+import { getSingleBoxScore } from '../util/NbaUtil'
+
+export default {
+  components: {
+    BoxScore,
+    AppHeader
+  },
+  computed: {
+    gameId() {
+      return this.$route.params.gameId
+    }
+  }
+}
+</script>

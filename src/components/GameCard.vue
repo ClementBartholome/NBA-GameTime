@@ -1,26 +1,28 @@
 <template>
-  <div class="game-card" v-if="game">
-    <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
-      <img :src="homeTeamLogo" alt="Home team logo" />
-      <h2>{{ game.home_team.full_name }}</h2>
-      <span
-        class="score"
-        v-if="game.home_team_score > 0"
-        :class="{ winner: isHomeWinner(game.home_team_score, game.visitor_team_score) }"
-        >{{ game.home_team_score }}</span
-      >
+  <router-link :to="'/boxscore/' + gameID + `-` + homeTeamName + `-` + visitorTeamName">
+    <div class="game-card" v-if="game">
+      <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
+        <img :src="homeTeamLogo" alt="Home team logo" />
+        <h2>{{ game.home_team.full_name }}</h2>
+        <span
+          class="score"
+          v-if="game.home_team_score > 0"
+          :class="{ winner: isHomeWinner(game.home_team_score, game.visitor_team_score) }"
+          >{{ game.home_team_score }}</span
+        >
+      </div>
+      <div class="away-team" :style="{ backgroundColor: visitorTeamColor }">
+        <img :src="visitorTeamLogo" alt="Visiting team logo" />
+        <h2>{{ game.visitor_team.full_name }}</h2>
+        <span
+          class="score"
+          v-if="game.visitor_team_score > 0"
+          :class="{ winner: isAwayWinner(game.home_team_score, game.visitor_team_score) }"
+          >{{ game.visitor_team_score }}</span
+        >
+      </div>
     </div>
-    <div class="away-team" :style="{ backgroundColor: visitorTeamColor }">
-      <img :src="visitorTeamLogo" alt="Visiting team logo" />
-      <h2>{{ game.visitor_team.full_name }}</h2>
-      <span
-        class="score"
-        v-if="game.visitor_team_score > 0"
-        :class="{ winner: isAwayWinner(game.home_team_score, game.visitor_team_score) }"
-        >{{ game.visitor_team_score }}</span
-      >
-    </div>
-  </div>
+  </router-link>
 </template>
 
 <script lang="ts">
@@ -41,7 +43,7 @@ export default {
     const homeTeamColor = ref('')
     const visitorTeamColor = ref('')
 
-    const playerStats = ref([])
+    const gameID = ref(0)
 
     onMounted(async () => {
       if (props.game) {
@@ -61,8 +63,9 @@ export default {
           homeTeamName.value,
           visitorTeamName.value
         )
-        playerStats.value = boxScore[0].PlayerGames
-        console.log(playerStats.value)
+        console.log(boxScore[0])
+        gameID.value = boxScore[0].Game.GameID
+        console.log(gameID.value)
       }
     })
 
@@ -72,7 +75,8 @@ export default {
       homeTeamColor,
       visitorTeamColor,
       homeTeamName,
-      visitorTeamName
+      visitorTeamName,
+      gameID
     }
   },
   methods: {
