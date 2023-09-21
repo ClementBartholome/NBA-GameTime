@@ -132,6 +132,7 @@ export default {
     },
     toggleCalendar() {
       console.log(this.currentDate)
+      console.log(this.games)
       // Toggle the calendar visibility
       this.showCalendar = !this.showCalendar
     },

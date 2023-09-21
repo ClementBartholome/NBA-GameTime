@@ -26,7 +26,7 @@ export default {
       return day === this.formattedDate
     },
     selectDay(day: string) {
-      console.log(day)
+      // console.log(day)
       this.$emit('selectDay', day)
     }
   }
