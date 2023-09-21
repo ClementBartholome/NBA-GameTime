@@ -81,7 +81,7 @@ const fetchStandings = async () => {
     standings.value = fetchedStandings
 
     // Fetch team logos and store them with team names as keys
-    const logos = await Promise.all(
+    await Promise.all(
       fetchedStandings.map(async (team) => {
         const logo = await getTeamInfo(team.Name).then((info) => info.logo)
         teamLogos.value[team.Name] = logo
@@ -115,10 +115,10 @@ const sortedStandings = computed(() => {
 
 .team-logo {
   height: 60px;
-  width: 60px;
+  width: 80px;
   background: white;
-  padding: 0.5rem;
-  border-radius: 50%;
+  padding: 0.2rem;
+  border-radius: 20px;
 }
 .standings-table {
   width: 100%;
