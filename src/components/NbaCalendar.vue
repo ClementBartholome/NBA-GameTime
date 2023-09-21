@@ -9,7 +9,7 @@
         type="text"
         id="calendar-input"
         v-model="currentDate"
-        @change="fetchGames"
+        @change="updateGames()"
         readonly
         style="display: none"
       />
@@ -37,10 +37,10 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
 import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
+import { fetchGames, getBoxScores } from '../util/NbaApi' //
 
 export default {
   components: {
@@ -51,9 +51,16 @@ export default {
   data() {
     return {
       games: [] as any[], // Data for the NBA games.
-      currentDate: '2023-05-21', // Base date
+      currentDate: '2023-05-09', // Base date
       selectedWeek: [] as string[], // The days of the week that is selected.
       showCalendar: false // Boolean to show or hide the calendar.
+    }
+  },
+  watch: {
+    currentDate(newDate, oldDate) {
+      if (newDate !== oldDate) {
+        getBoxScores(newDate)
+      }
     }
   },
   computed: {
@@ -71,35 +78,15 @@ export default {
     }
   },
   mounted() {
-    // Fetch NBA games and update the selected week
-    this.fetchGames()
+    this.updateGames()
     this.updateSelectedWeek()
+    getBoxScores(this.currentDate)
   },
   methods: {
-    fetchGames() {
-      // Check if game data is in cache
-      const cachedData = localStorage.getItem(this.currentDate)
-      if (cachedData) {
-        this.games = JSON.parse(cachedData)
-      } else {
-        // If not in cache, fetch data from the NBA API
-        axios
-          .get('https://www.balldontlie.io/api/v1/games', {
-            params: {
-              start_date: this.currentDate,
-              end_date: this.currentDate
-            }
-          })
-          .then((response) => {
-            this.games = response.data.data as any[]
-
-            // Store fetched data in local cache
-            localStorage.setItem(this.currentDate, JSON.stringify(this.games))
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-      }
+    async updateGames() {
+      // Call fetchGames from NbaApi.vue with the current date
+      const games = await fetchGames(this.currentDate)
+      this.games = games
     },
     updateSelectedWeek() {
       // Update the selected week's days based on the current date
@@ -127,7 +114,7 @@ export default {
       this.showCalendar = false
       this.currentDate = selectedDate
       // Fetch NBA games for the new date
-      this.fetchGames()
+      this.updateGames()
       this.updateSelectedWeek()
     },
     toggleCalendar() {
@@ -149,7 +136,7 @@ export default {
       this.currentDate = selectedDate.toISOString().split('T')[0]
 
       // Fetch NBA games for the new date
-      this.fetchGames()
+      this.updateGames()
     },
     prevWeek() {
       // Go back one week by subtracting 7 days from currentDate
@@ -158,7 +145,7 @@ export default {
       this.currentDate = prevDate.toISOString().split('T')[0]
 
       // Fetch NBA games for the new week and update selectedWeek
-      this.fetchGames()
+      this.updateGames()
       this.updateSelectedWeek()
     },
     nextWeek() {
@@ -168,7 +155,7 @@ export default {
       this.currentDate = nextDate.toISOString().split('T')[0]
 
       // Fetch NBA games for the new week and update selectedWeek
-      this.fetchGames()
+      this.updateGames()
       this.updateSelectedWeek()
     }
   }

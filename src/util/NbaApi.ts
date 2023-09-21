@@ -7,6 +7,35 @@ interface TeamInfo {
 
 const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
 
+export async function fetchGames(currentDate: string) {
+  // Check if game data is in cache
+  const cachedData = localStorage.getItem(currentDate)
+  if (cachedData) {
+    return JSON.parse(cachedData)
+  } else {
+    try {
+      // If not in cache, fetch data from the NBA API
+      const response = await axios.get('https://www.balldontlie.io/api/v1/games', {
+        params: {
+          start_date: currentDate,
+          end_date: currentDate
+        }
+      })
+
+      const games = response.data.data as any[]
+
+      // Store fetched data in local cache
+      localStorage.setItem(currentDate, JSON.stringify(games))
+
+      return games
+    } catch (error) {
+      console.error(error)
+      // Handle the error gracefully or return an empty array if needed
+      return []
+    }
+  }
+}
+
 // Get team information by name
 export async function getTeamInfo(teamName: string) {
   // Check if team info is already stored in localStorage
@@ -83,5 +112,35 @@ export async function getStandings(season: number) {
   }
 
   // Return an empty array if no standings data is found
+  return []
+}
+
+export async function getBoxScores(currentDate: string) {
+  const storedInfo = localStorage.getItem(`boxscores_${currentDate}`)
+
+  if (storedInfo) {
+    console.log(storedInfo)
+    return JSON.parse(storedInfo)
+  }
+
+  try {
+    // Fetch NBA box scores data from the API for the specified date
+    const response = await axios.get(
+      `
+      https://api.sportsdata.io/v3/nba/stats/json/BoxScores/${currentDate}?key=${apiKey}`
+      // Note: 1000 calls per month limit
+    )
+
+    if (Array.isArray(response.data) && response.data.length > 0) {
+      const boxScores = response.data
+      localStorage.setItem(`boxscores_${currentDate}`, JSON.stringify(boxScores))
+
+      return boxScores
+    }
+  } catch (error) {
+    console.error('Error fetching NBA box scores:', error)
+  }
+
+  // Return an empty array if no box scores data is found
   return []
 }
