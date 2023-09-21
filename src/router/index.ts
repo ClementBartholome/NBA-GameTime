@@ -1,6 +1,4 @@
-import { createApp } from 'vue'
 import { createRouter, createWebHistory } from 'vue-router'
-import App from '../App.vue'
 import HomeView from '../views/HomeView.vue'
 import StandingsView from '../views/StandingsView.vue'
 
@@ -19,11 +17,5 @@ const router = createRouter({
     }
   ]
 })
-
-const app = createApp(App)
-
-app.use(router)
-
-app.mount('#app')
 
 export default router
