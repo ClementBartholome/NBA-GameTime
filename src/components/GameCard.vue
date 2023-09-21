@@ -26,27 +26,43 @@
 <script lang="ts">
 import { ref, onMounted } from 'vue'
 import { getTeamInfo } from '../util/NbaApi'
+import { getSingleBoxScore } from '../util/NbaUtil'
 
 export default {
   props: {
-    game: Object
+    game: Object,
+    gamesBoxScores: Array
   },
   setup(props) {
+    const homeTeamName = ref('')
+    const visitorTeamName = ref('')
     const homeTeamLogo = ref('')
     const visitorTeamLogo = ref('')
     const homeTeamColor = ref('')
     const visitorTeamColor = ref('')
 
+    const playerStats = ref([])
+
     onMounted(async () => {
       if (props.game) {
         const homeTeamInfo = await getTeamInfo(props.game.home_team.name)
-        console.log(homeTeamInfo)
+        // console.log(homeTeamInfo)
         const visitorTeamInfo = await getTeamInfo(props.game.visitor_team.name)
 
+        homeTeamName.value = homeTeamInfo.teamName
+        visitorTeamName.value = visitorTeamInfo.teamName
         homeTeamLogo.value = homeTeamInfo.logo
         visitorTeamLogo.value = visitorTeamInfo.logo
         homeTeamColor.value = '#' + homeTeamInfo.primaryColor
         visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
+
+        const boxScore = getSingleBoxScore(
+          props.gamesBoxScores,
+          homeTeamName.value,
+          visitorTeamName.value
+        )
+        playerStats.value = boxScore[0].PlayerGames
+        console.log(playerStats.value)
       }
     })
 
@@ -54,7 +70,9 @@ export default {
       homeTeamLogo,
       visitorTeamLogo,
       homeTeamColor,
-      visitorTeamColor
+      visitorTeamColor,
+      homeTeamName,
+      visitorTeamName
     }
   },
   methods: {

@@ -3,6 +3,7 @@ import axios from 'axios'
 interface TeamInfo {
   logo: string
   primaryColor: string
+  teamName: string
 }
 
 const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
@@ -61,7 +62,8 @@ export async function getTeamInfo(teamName: string) {
         // Create a TeamInfo object with logo and primaryColor
         const teamInfo: TeamInfo = {
           logo: team.WikipediaLogoUrl,
-          primaryColor: team.PrimaryColor
+          primaryColor: team.PrimaryColor,
+          teamName: team.Key
         }
 
         // Store the team info in localStorage
@@ -78,7 +80,8 @@ export async function getTeamInfo(teamName: string) {
   // Return default values if no data is found
   return {
     logo: 'https://www.1min30.com/wp-content/uploads/2018/03/logo-NBA.jpg',
-    primaryColor: 'ffffff'
+    primaryColor: 'ffffff',
+    teamName: 'Undefined'
   }
 }
 

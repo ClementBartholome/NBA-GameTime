@@ -30,7 +30,7 @@
 
     <ul class="game-list">
       <li v-for="game in games" :key="game.id">
-        <GameCard :game="game" />
+        <GameCard :game="game" :gamesBoxScores="gamesBoxScores" />
       </li>
     </ul>
   </section>
@@ -51,6 +51,7 @@ export default {
   data() {
     return {
       games: [] as any[], // Data for the NBA games.
+      gamesBoxScores: [], // Data for the NBA games box scores.
       currentDate: '2023-05-09', // Base date
       selectedWeek: [] as string[], // The days of the week that is selected.
       showCalendar: false // Boolean to show or hide the calendar.
@@ -59,7 +60,8 @@ export default {
   watch: {
     currentDate(newDate, oldDate) {
       if (newDate !== oldDate) {
-        getBoxScores(newDate)
+        this.updateGames()
+        this.updateGamesBoxScores(newDate) // Mettez à jour les scores des jeux lorsque la date change
       }
     }
   },
@@ -80,13 +82,16 @@ export default {
   mounted() {
     this.updateGames()
     this.updateSelectedWeek()
-    getBoxScores(this.currentDate)
+    this.updateGamesBoxScores(this.currentDate)
   },
   methods: {
     async updateGames() {
-      // Call fetchGames from NbaApi.vue with the current date
       const games = await fetchGames(this.currentDate)
       this.games = games
+    },
+    async updateGamesBoxScores(date: string) {
+      const gamesBoxScores = await getBoxScores(date)
+      this.gamesBoxScores = gamesBoxScores
     },
     updateSelectedWeek() {
       // Update the selected week's days based on the current date
