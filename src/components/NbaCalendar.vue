@@ -61,7 +61,7 @@ export default {
     currentDate(newDate, oldDate) {
       if (newDate !== oldDate) {
         this.updateGames()
-        this.updateGamesBoxScores(newDate) // Mettez à jour les scores des jeux lorsque la date change
+        this.updateGamesBoxScores(newDate)
       }
     }
   },
