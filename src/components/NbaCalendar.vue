@@ -41,6 +41,7 @@ import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
 import { fetchGames, getBoxScores } from '../util/NbaApi'
+import { useGamesStore } from '../stores/GamesStore'
 
 export default {
   components: {
@@ -61,12 +62,15 @@ export default {
     currentDate(newDate, oldDate) {
       if (newDate !== oldDate) {
         this.updateGames()
-        this.updateGamesBoxScores(newDate) // Mettez à jour les scores des jeux lorsque la date change
+        this.updateGamesBoxScores(newDate)
       }
     }
   },
   computed: {
-    // Format the current date for display
+    gamesBoxScores() {
+      return useGamesStore().gamesBoxScores
+    },
+    // Format the date to be displayed in the calendar
     formattedDate() {
       const dateObj = new Date(this.currentDate)
       const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
@@ -75,7 +79,6 @@ export default {
     },
     currentMonth() {
       const dateObj = new Date(this.currentDate)
-
       return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
     }
   },
@@ -91,8 +94,7 @@ export default {
     },
     async updateGamesBoxScores(date: string) {
       const gamesBoxScores = await getBoxScores(date)
-      console.log(gamesBoxScores)
-      this.gamesBoxScores = gamesBoxScores
+      useGamesStore().setGamesBoxScores(gamesBoxScores)
     },
     updateSelectedWeek() {
       // Update the selected week's days based on the current date
@@ -195,9 +197,9 @@ section.calendar {
 }
 
 .calendar-icon {
-  margin-right: 10px; /* Adjust the spacing between the icon and input field as needed */
-  font-size: 1.25rem; /* Adjust the icon size as needed */
-  color: #888; /* Adjust the icon color as needed */
+  margin-right: 10px;
+  font-size: 1.25rem;
+  color: #888;
   display: flex;
   align-items: center;
   cursor: pointer;
@@ -205,7 +207,7 @@ section.calendar {
 }
 
 #calendar-input {
-  display: none; /* Hide the input field */
+  display: none;
 }
 
 .game-list {
