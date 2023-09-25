@@ -2,10 +2,9 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import StandingsView from '../views/StandingsView.vue'
 import StatsView from '../views/StatsView.vue'
-import BoxScoreView from '../views/BoxScoreView.vue'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -21,11 +20,6 @@ const router = createRouter({
       path: '/stats',
       name: 'stats',
       component: StatsView
-    },
-    {
-      path: '/boxscore/:gameId-:homeTeamName-:visitorTeamName',
-      name: 'BoxScoreView',
-      component: BoxScoreView
     }
   ]
 })
