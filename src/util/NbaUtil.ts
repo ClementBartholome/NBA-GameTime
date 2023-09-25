@@ -1,4 +1,8 @@
-export function getSingleBoxScore(gamesData: any, homeTeamName: string, awayTeamName: string) {
+export function getSingleBoxScore(
+  gamesData: any,
+  homeTeamName: string | string[],
+  awayTeamName: string | string[]
+) {
   // Filter method to find the game that matches the home and away team names
   const filteredGames = gamesData.filter((game: any) => {
     // console.log(game)
