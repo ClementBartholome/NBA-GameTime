@@ -31,7 +31,7 @@ export async function fetchGames(currentDate: string) {
       return games
     } catch (error) {
       console.error(error)
-      // Handle the error gracefully or return an empty array if needed
+      // Handle the error or return an empty array if needed
       return []
     }
   }
