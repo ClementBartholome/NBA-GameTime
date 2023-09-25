@@ -51,7 +51,7 @@ export default {
       // Update selectedDate when currentDate prop changes
       this.selectedDate = new Date(newDate.replace(/-/g, '/'))
       // Recalculate the calendar for the new month
-      this.calculateCalendar()
+      this.createCalendar()
       // Update currentMonth
       this.currentMonth = this.selectedDate.toLocaleString('en-US', {
         year: 'numeric',
@@ -60,8 +60,8 @@ export default {
     }
   },
   mounted() {
-    // Calculate the initial calendar
-    this.calculateCalendar()
+    // Create the initial calendar
+    this.createCalendar()
     // Set currentMonth initially
     this.currentMonth = this.selectedDate.toLocaleString('en-US', {
       year: 'numeric',
@@ -70,16 +70,18 @@ export default {
   },
   methods: {
     selectDate(date: Date) {
-      console
+      // Update the selectedDate and emit the selected date as a string
       this.selectedDate = date
       this.$emit('select', date.toISOString().split('T')[0])
     },
     isDateSelected(date: Date) {
+      // Check if the date is selected (compared to the currentDate prop)
       return date.toISOString().split('T')[0] === this.currentDate
     },
     prevMonth() {
+      // Move to the previous month and recreate the calendar
       this.selectedDate.setMonth(this.selectedDate.getMonth() - 1)
-      this.calculateCalendar()
+      this.createCalendar()
       // Update currentMonth
       this.currentMonth = this.selectedDate.toLocaleString('en-US', {
         year: 'numeric',
@@ -87,30 +89,31 @@ export default {
       })
     },
     nextMonth() {
+      // Move to the next month and recreate the calendar
       this.selectedDate.setMonth(this.selectedDate.getMonth() + 1)
-      this.calculateCalendar()
+      this.createCalendar()
       // Update currentMonth
       this.currentMonth = this.selectedDate.toLocaleString('en-US', {
         year: 'numeric',
         month: 'long'
       })
     },
-    calculateCalendar() {
+    createCalendar() {
       const year = this.selectedDate.getFullYear()
       const month = this.selectedDate.getMonth()
       const lastDay = new Date(year, month + 1, 0)
       const daysInMonth = lastDay.getDate()
 
-      // Ajout de cette ligne pour ajuster au fuseau horaire local
+      // Adjust to the local timezone
       const firstDay = new Date(Date.UTC(year, month, 1))
 
-      const startOffset = firstDay.getUTCDay() // Utiliser getUTCDay pour le jour de la semaine
+      const startOffset = firstDay.getUTCDay()
 
       this.calendar = []
       let week: Date[] = []
 
       for (let day = 1 - startOffset; day <= daysInMonth; day++) {
-        // Ajout de cette ligne pour ajuster au fuseau horaire local
+        // Adjusted this line to account for the local timezone
         const currentDate = new Date(Date.UTC(year, month, day))
         week.push(currentDate)
         if (week.length === 7) {

@@ -11,6 +11,7 @@ import BoxScore from '../components/BoxScore.vue'
 import AppHeader from '../components/AppHeader.vue'
 import { getSingleBoxScore } from '../util/NbaUtil'
 import { useGamesStore } from '../stores/GamesStore'
+
 export default {
   components: {
     BoxScore,
@@ -31,21 +32,17 @@ export default {
     },
     playerStats() {
       if (this.gamesBoxScores && this.gamesBoxScores.length > 0) {
+        // Get the single box score for the specified teams
         const singleBoxScore = getSingleBoxScore(
           this.gamesBoxScores,
           this.homeTeamName,
           this.visitorTeamName
         )
+        // Return the player statistics for the game
         return singleBoxScore[0].PlayerGames
       }
+      // If no data is available, return an empty array
       return []
-    }
-  },
-  methods: {
-    async fetchData() {
-      console.log(this.gamesBoxScores)
-      console.log(this.homeTeamName)
-      console.log(this.visitorTeamName)
     }
   }
 }

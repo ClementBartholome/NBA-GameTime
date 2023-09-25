@@ -46,26 +46,38 @@ export default {
     const gameID = ref(0)
 
     onMounted(async () => {
-      if (props.game) {
+      // Check if game data and gamesBoxScores are available and not empty
+      if (props.game && props.gamesBoxScores && props.gamesBoxScores.length > 0) {
+        // Fetch home team information
         const homeTeamInfo = await getTeamInfo(props.game.home_team.name)
-        // console.log(homeTeamInfo)
+        // Fetch visitor team information
         const visitorTeamInfo = await getTeamInfo(props.game.visitor_team.name)
 
+        // Set home team properties
         homeTeamName.value = homeTeamInfo.teamName
-        visitorTeamName.value = visitorTeamInfo.teamName
         homeTeamLogo.value = homeTeamInfo.logo
-        visitorTeamLogo.value = visitorTeamInfo.logo
         homeTeamColor.value = '#' + homeTeamInfo.primaryColor
+
+        // Set visitor team properties
+        visitorTeamName.value = visitorTeamInfo.teamName
+        visitorTeamLogo.value = visitorTeamInfo.logo
         visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
 
+        // Get the single box score for the specified teams
         const boxScore = getSingleBoxScore(
           props.gamesBoxScores,
           homeTeamName.value,
           visitorTeamName.value
         )
-        console.log(boxScore[0])
-        gameID.value = boxScore[0].Game.GameID
-        console.log(gameID.value)
+
+        // Check if boxScore data is structured correctly
+        if (boxScore && boxScore[0] && boxScore[0].Game && boxScore[0].Game.GameID) {
+          gameID.value = boxScore[0].Game.GameID
+          console.log(boxScore[0])
+          console.log(gameID.value)
+        } else {
+          console.error('La structure des données de boxScore[0] est incorrecte.')
+        }
       }
     })
 
@@ -80,9 +92,11 @@ export default {
     }
   },
   methods: {
+    // Determine if the home team is the winner
     isHomeWinner(homeScore: number, awayScore: number) {
       return homeScore > awayScore
     },
+    // Determine if the away team is the winner
     isAwayWinner(homeScore: number, awayScore: number) {
       return awayScore > homeScore
     }

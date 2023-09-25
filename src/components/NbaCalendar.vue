@@ -52,13 +52,13 @@ export default {
   data() {
     return {
       games: [] as any[], // Data for the NBA games.
-      gamesBoxScores: [], // Data for the NBA games box scores.
       currentDate: '2023-05-09', // Base date
       selectedWeek: [] as string[], // The days of the week that is selected.
       showCalendar: false // Boolean to show or hide the calendar.
     }
   },
   watch: {
+    // Watch for changes in currentDate and trigger updates
     currentDate(newDate, oldDate) {
       if (newDate !== oldDate) {
         this.updateGames()
@@ -83,25 +83,33 @@ export default {
     }
   },
   mounted() {
+    // Initial setup when the component is mounted
     this.updateGames()
     this.updateSelectedWeek()
     this.updateGamesBoxScores(this.currentDate)
   },
   methods: {
     async updateGames() {
-      const games = await fetchGames(this.currentDate)
-      this.games = games
+      try {
+        // Fetch NBA games for the current date
+        const games = await fetchGames(this.currentDate)
+        this.games = games
+      } catch (error) {
+        console.error('Erreur lors de la mise à jour des matchs :', error)
+      }
     },
     async updateGamesBoxScores(date: string) {
+      // Fetch NBA games box scores for the given date
       const gamesBoxScores = await getBoxScores(date)
+      // Update the store with the fetched data
       useGamesStore().setGamesBoxScores(gamesBoxScores)
     },
     updateSelectedWeek() {
       // Update the selected week's days based on the current date
-      const selectedDate = new Date(this.currentDate)
-      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+      const selectedDate = new Date(this.currentDate) // Get the current date as a JavaScript Date object
+      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] // Abbreviated day names
 
-      this.selectedWeek = []
+      this.selectedWeek = [] // Initialize an empty array to store the days of the selected week
 
       // Get the day of the week for the current date (0 = Sunday, 1 = Monday, etc.)
       const dayOfWeek = selectedDate.getDay()
@@ -114,7 +122,10 @@ export default {
       for (let i = 0; i < 7; i++) {
         const day = new Date(sundayDate)
         day.setDate(sundayDate.getDate() + i)
-        this.selectedWeek.push(daysOfWeek[day.getDay()] + ' ' + day.getDate())
+        // Returns a string like "Mon 1", "Tue 2", etc.
+        const formattedDay = daysOfWeek[day.getDay()] + ' ' + day.getDate()
+        this.selectedWeek.push(formattedDay) // Add the formatted day to the selectedWeek array
+        console.log(this.selectedWeek) // Log the updated selectedWeek array (for debugging)
       }
     },
     selectDate(selectedDate: any) {
@@ -169,6 +180,52 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.date-picker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.date-picker button {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+section.calendar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.calendar-input {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-icon {
+  margin-right: 10px;
+  font-size: 1.25rem;
+  color: #888;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 4rem;
+}
+
+#calendar-input {
+  display: none;
+}
+
+.game-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+</style>
 
 <style scoped>
 .date-picker {
