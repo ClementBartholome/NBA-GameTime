@@ -80,7 +80,7 @@ const fetchStandings = async () => {
 
     // Fetch team logos and store them with team names as keys
     await Promise.all(
-      fetchedStandings.map(async (team) => {
+      fetchedStandings.map(async (team: any) => {
         const logo = await getTeamInfo(team.Name).then((info) => info.logo)
         teamLogos.value[team.Name] = logo
         return logo

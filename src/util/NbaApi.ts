@@ -9,13 +9,12 @@ interface TeamInfo {
 const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
 
 export async function fetchGames(currentDate: string) {
-  // Check if game data is in cache
-  const cachedData = localStorage.getItem(currentDate)
-  if (cachedData) {
-    return JSON.parse(cachedData)
-  } else {
-    try {
-      // If not in cache, fetch data from the NBA API
+  try {
+    const cachedData = localStorage.getItem(currentDate)
+
+    if (cachedData) {
+      return JSON.parse(cachedData)
+    } else {
       const response = await axios.get('https://www.balldontlie.io/api/v1/games', {
         params: {
           start_date: currentDate,
@@ -26,14 +25,28 @@ export async function fetchGames(currentDate: string) {
       const games = response.data.data as any[]
 
       // Store fetched data in local cache
-      localStorage.setItem(currentDate, JSON.stringify(games))
+      const simplifiedGames = games.map((game) => ({
+        id: game.id,
+        home_team: {
+          name: game.home_team.name,
+          full_name: game.home_team.full_name
+        },
+        visitor_team: {
+          name: game.visitor_team.name,
+          full_name: game.visitor_team.full_name
+        },
+        home_team_score: game.home_team_score,
+        visitor_team_score: game.visitor_team_score
+      }))
 
-      return games
-    } catch (error) {
-      console.error(error)
-      // Handle the error or return an empty array if needed
-      return []
+      localStorage.setItem(currentDate, JSON.stringify(simplifiedGames))
+      console.log(simplifiedGames)
+      return simplifiedGames
     }
+  } catch (error) {
+    console.error('Error fetching NBA games:', error)
+    // Handle the error or return an empty array if needed
+    return []
   }
 }
 
@@ -92,53 +105,74 @@ export async function getStandings(season: number) {
 
   if (storedInfo) {
     // If found, parse and return the stored standings data
-    return JSON.parse(storedInfo) as TeamInfo[]
+    return JSON.parse(storedInfo)
   }
 
   try {
-    // Fetch NBA standings data from the API for the specified season
     const response = await axios.get(
       `https://api.sportsdata.io/v3/nba/scores/json/Standings/${season}?key=${apiKey}`
-      // Note: 1000 calls per month limit
     )
 
     if (Array.isArray(response.data) && response.data.length > 0) {
-      // Store the standings data in localStorage for future use
-      const standings = response.data
-      localStorage.setItem(`standings_${season}`, JSON.stringify(standings))
-
-      // Return the NBA standings data
+      // Map the response data to only include the necessary fields
+      const standings = response.data.map((team: any) => ({
+        City: team.City,
+        Name: team.Name,
+        Wins: team.Wins,
+        Losses: team.Losses,
+        Percentage: team.Percentage,
+        LastTenWins: team.LastTenWins,
+        LastTenLosses: team.LastTenLosses,
+        Streak: team.Streak
+      }))
+      console.log(standings)
       return standings
     }
   } catch (error) {
     console.error('Error fetching NBA standings:', error)
   }
 
-  // Return an empty array if no standings data is found
+  // Return an empty array if no standings data is found or an error occurs
   return []
 }
 
 export async function getBoxScores(currentDate: string) {
-  const storedInfo = localStorage.getItem(`boxscores_${currentDate}`)
-
-  if (storedInfo) {
-    console.log(storedInfo)
-    return JSON.parse(storedInfo)
-  }
-
   try {
-    // Fetch NBA box scores data from the API for the specified date
-    const response = await axios.get(
-      `
-      https://api.sportsdata.io/v3/nba/stats/json/BoxScores/${currentDate}?key=${apiKey}`
-      // Note: 1000 calls per month limit
-    )
+    const storedInfo = localStorage.getItem(`boxscores_${currentDate}`)
 
-    if (Array.isArray(response.data) && response.data.length > 0) {
-      const boxScores = response.data
-      localStorage.setItem(`boxscores_${currentDate}`, JSON.stringify(boxScores))
+    if (storedInfo) {
+      return JSON.parse(storedInfo)
+    } else {
+      const response = await axios.get(
+        `https://api.sportsdata.io/v3/nba/stats/json/BoxScores/${currentDate}?key=${apiKey}`
+        // Note: 1000 calls per month limit
+      )
 
-      return boxScores
+      if (Array.isArray(response.data) && response.data.length > 0) {
+        const boxScores = response.data
+
+        // Simplify the box scores data
+        const simplifiedBoxScores = boxScores.map((boxScore) => ({
+          Game: {
+            HomeTeam: boxScore.Game.HomeTeam,
+            AwayTeam: boxScore.Game.AwayTeam,
+            GameID: boxScore.Game.GameID
+          },
+          PlayerGames: boxScore.PlayerGames.map((playerGame: any) => ({
+            Name: playerGame.Name,
+            Minutes: playerGame.Minutes,
+            Points: playerGame.Points,
+            Rebounds: playerGame.Rebounds,
+            Assists: playerGame.Assists,
+            HomeOrAway: playerGame.HomeOrAway,
+            Started: playerGame.Started
+          }))
+        }))
+
+        localStorage.setItem(`boxscores_${currentDate}`, JSON.stringify(simplifiedBoxScores))
+        console.log(simplifiedBoxScores)
+        return simplifiedBoxScores
+      }
     }
   } catch (error) {
     console.error('Error fetching NBA box scores:', error)
