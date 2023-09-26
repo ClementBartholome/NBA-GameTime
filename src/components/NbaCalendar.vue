@@ -94,6 +94,7 @@ export default {
         // Fetch NBA games for the current date
         const games = await fetchGames(this.currentDate)
         this.games = games
+        console.log(this.games)
       } catch (error) {
         console.error('Erreur lors de la mise à jour des matchs :', error)
       }
@@ -125,7 +126,7 @@ export default {
         // Returns a string like "Mon 1", "Tue 2", etc.
         const formattedDay = daysOfWeek[day.getDay()] + ' ' + day.getDate()
         this.selectedWeek.push(formattedDay) // Add the formatted day to the selectedWeek array
-        console.log(this.selectedWeek) // Log the updated selectedWeek array (for debugging)
+        // console.log(this.selectedWeek)
       }
     },
     selectDate(selectedDate: any) {
