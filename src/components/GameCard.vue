@@ -26,13 +26,26 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, type PropType } from 'vue'
 import { getTeamInfo } from '../util/NbaApi'
 import { getSingleBoxScore } from '../util/NbaUtil'
 
+interface Game {
+  home_team: {
+    name: string
+    full_name: string
+  }
+  visitor_team: {
+    name: string
+    full_name: string
+  }
+  home_team_score: number
+  visitor_team_score: number
+}
+
 export default {
   props: {
-    game: Object,
+    game: Object as PropType<Game>,
     gamesBoxScores: Array
   },
   setup(props) {
