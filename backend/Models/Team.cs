@@ -4,15 +4,18 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Team
 {
-    [Key]
-    public int Id { get; set; }
 
-    public string Name { get; set; }
-    public string FullName { get; set; }
+
+    public int id { get; set; }
+
+    public string logo { get; set; }
+    public string primaryColor { get; set; }
+    public string teamName { get; set; }
 
     public Team()
     {
-        Name = "";
-        FullName = "";
+        logo = "";
+        primaryColor = "";
+        teamName = "";
     }
 }

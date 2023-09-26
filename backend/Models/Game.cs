@@ -1,16 +1,20 @@
 public class Game
 {
-    public int Id { get; set; }
-    public Team HomeTeam { get; set; }
-    public Team VisitorTeam { get; set; }
-    public int HomeTeamScore { get; set; }
-    public int VisitorTeamScore { get; set; }
+    public int id { get; set; }
+    public string home_team_name { get; set; }
+    public string home_team_full_name { get; set; }
+    public string visitor_team_name { get; set; }
+    public string visitor_team_full_name { get; set; }
+    public int home_team_score { get; set; }
+    public int visitor_team_score { get; set; }
 
     public Game() {
-        Id = 0;
-        HomeTeam = new Team();
-        VisitorTeam = new Team();
-        HomeTeamScore = 0;
-        VisitorTeamScore = 0;
+        id = 0;
+        home_team_name = "";
+        home_team_full_name = "";
+        visitor_team_name = "";
+        visitor_team_full_name = "";
+        home_team_score = 0;
+        visitor_team_score = 0;
     }
 }

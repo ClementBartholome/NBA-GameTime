@@ -24,7 +24,6 @@ export async function fetchGames(currentDate: string) {
 
       const games = response.data.data as any[]
 
-      // Store fetched data in local cache
       const simplifiedGames = games.map((game) => ({
         id: game.id,
         home_team: {
@@ -38,6 +37,23 @@ export async function fetchGames(currentDate: string) {
         home_team_score: game.home_team_score,
         visitor_team_score: game.visitor_team_score
       }))
+
+      // Store fetched data in local cache
+      // const simplifiedGames = games.map((game) => ({
+      //   home_team_name: game.home_team.name,
+      //   home_team_full_name: game.home_team.full_name,
+      //   visitor_team_name: game.visitor_team.name,
+      //   visitor_team_full_name: game.visitor_team.full_name,
+      //   home_team_score: game.home_team_score,
+      //   visitor_team_score: game.visitor_team_score
+      // }))
+
+      // // // Send the data to the backend
+      // await axios.post('http://localhost:5068/api/games', simplifiedGames, {
+      //   headers: {
+      //     'Content-Type': 'application/json'
+      //   }
+      // })
 
       localStorage.setItem(currentDate, JSON.stringify(simplifiedGames))
       console.log(simplifiedGames)

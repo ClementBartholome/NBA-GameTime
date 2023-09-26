@@ -10,7 +10,7 @@ public class NbaDbContext : DbContext
 
     public DbSet<Game> Games { get; set; }
     public DbSet<Team> Teams { get; set; }
-    public DbSet<PlayerStats> PlayerStats { get; set; }
+    // public DbSet<PlayerStats> PlayerStats { get; set; }
     public DbSet<Standings> Standings { get; set; }
-    public DbSet<BoxScore> BoxScores { get; set; }
+    // public DbSet<BoxScore> BoxScores { get; set; }
 }

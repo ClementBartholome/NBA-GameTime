@@ -1,5 +1,13 @@
+using System;
+using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations.Schema; 
+
 public class Standings
 {
+
+
+    public int id { get; set; }
+
     public string City { get; set; }
     public string Name { get; set; }
     public int Wins { get; set; }
