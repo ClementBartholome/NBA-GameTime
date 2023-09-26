@@ -1,6 +1,6 @@
 <template>
   <AppHeader />
-  <main>
+  <main v-cloak>
     <NbaCalendar />
   </main>
 </template>
@@ -9,3 +9,9 @@
 import NbaCalendar from '../components/NbaCalendar.vue'
 import AppHeader from '../components/AppHeader.vue'
 </script>
+
+<style>
+[v-cloak] {
+  display: none;
+}
+</style>
