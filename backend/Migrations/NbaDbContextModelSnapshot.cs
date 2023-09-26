@@ -24,6 +24,9 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    b.Property<int>("gameID")
+                        .HasColumnType("int");
+
                     b.Property<string>("home_team_full_name")
                         .IsRequired()
                         .HasColumnType("longtext");

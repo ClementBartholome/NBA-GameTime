@@ -29,7 +29,7 @@
     />
 
     <ul class="game-list">
-      <li v-for="game in games" :key="game.id">
+      <li v-for="game in games" :key="game.gameID">
         <GameCard :game="game" :gamesBoxScores="gamesBoxScores" />
       </li>
     </ul>

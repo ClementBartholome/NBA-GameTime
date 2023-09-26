@@ -3,7 +3,7 @@
     <div class="game-card" v-if="game">
       <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
         <img :src="homeTeamLogo" alt="Home team logo" />
-        <h2>{{ game.home_team.full_name }}</h2>
+        <h2>{{ game.home_team_full_name }}</h2>
         <span
           class="score"
           v-if="game.home_team_score > 0"
@@ -13,7 +13,7 @@
       </div>
       <div class="away-team" :style="{ backgroundColor: visitorTeamColor }">
         <img :src="visitorTeamLogo" alt="Visiting team logo" />
-        <h2>{{ game.visitor_team.full_name }}</h2>
+        <h2>{{ game.visitor_team_full_name }}</h2>
         <span
           class="score"
           v-if="game.visitor_team_score > 0"
@@ -31,16 +31,23 @@ import { getTeamInfo } from '../util/NbaApi'
 import { getSingleBoxScore } from '../util/NbaUtil'
 
 interface Game {
-  home_team: {
-    name: string
-    full_name: string
-  }
-  visitor_team: {
-    name: string
-    full_name: string
-  }
+  home_team_name: string
+  home_team_full_name: string
+  visitor_team_name: string
+  visitor_team_full_name: string
   home_team_score: number
   visitor_team_score: number
+
+  // home_team: {
+  //   name: string
+  //   full_name: string
+  // }
+  // visitor_team: {
+  //   name: string
+  //   full_name: string
+  // }
+  // home_team_score: number
+  // visitor_team_score: number
 }
 
 export default {
@@ -59,12 +66,14 @@ export default {
     const gameID = ref(0)
 
     onMounted(async () => {
+      console.log(props.game)
       // Check if game data and gamesBoxScores are available and not empty
       if (props.game && props.gamesBoxScores && props.gamesBoxScores.length > 0) {
         // Fetch home team information
-        const homeTeamInfo = await getTeamInfo(props.game.home_team.name)
+        console.log(props.game.home_team_name)
+        const homeTeamInfo = await getTeamInfo(props.game.home_team_name)
         // Fetch visitor team information
-        const visitorTeamInfo = await getTeamInfo(props.game.visitor_team.name)
+        const visitorTeamInfo = await getTeamInfo(props.game.visitor_team_name)
 
         // Set home team properties
         homeTeamName.value = homeTeamInfo.teamName
