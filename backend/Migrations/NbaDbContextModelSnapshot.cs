@@ -84,9 +84,11 @@ namespace backend.Migrations
                     b.Property<decimal>("Percentage")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<string>("Streak")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<int>("Season")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Streak")
+                        .HasColumnType("int");
 
                     b.Property<int>("Wins")
                         .HasColumnType("int");

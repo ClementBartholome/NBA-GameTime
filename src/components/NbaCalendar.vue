@@ -1,5 +1,5 @@
 <template>
-  <section class="calendar">
+  <section class="calendar" v-cloak>
     <div class="calendar-input">
       <label for="calendar-input" class="calendar-icon" @click="toggleCalendar">
         <span>{{ currentMonth }}</span>
@@ -29,6 +29,7 @@
     />
 
     <ul class="game-list">
+      <li v-if="games.length === 0">No games on this date</li>
       <li v-for="game in games" :key="game.gameID">
         <GameCard :game="game" :gamesBoxScores="gamesBoxScores" />
       </li>
@@ -184,6 +185,9 @@ export default {
 </script>
 
 <style scoped>
+.calendar[v-cloak] {
+  display: none;
+}
 .date-picker {
   display: flex;
   align-items: center;

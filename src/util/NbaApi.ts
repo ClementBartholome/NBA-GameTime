@@ -25,7 +25,7 @@ export async function fetchAndSaveGames(currentDate: string) {
     return []
   }
 
-  const simplifiedGames = games.map((game) => ({
+  const transformedGamesData = games.map((game) => ({
     gameID: game.id,
     home_team_name: game.home_team.name,
     home_team_full_name: game.home_team.full_name,
@@ -37,13 +37,13 @@ export async function fetchAndSaveGames(currentDate: string) {
   }))
 
   // Send the data to the backend
-  await axios.post('http://localhost:5068/api/games', simplifiedGames, {
+  await axios.post('http://localhost:5068/api/games', transformedGamesData, {
     headers: {
       'Content-Type': 'application/json'
     }
   })
 
-  return simplifiedGames
+  return transformedGamesData
 }
 
 export async function getGamesFromDb(currentDate: string) {
@@ -133,12 +133,11 @@ export async function getTeamInfoFromDb(teamName: string) {
 
 // Function to get NBA standings
 export async function getStandings(season: number) {
-  // Check if standings data is already stored in localStorage
-  const storedInfo = localStorage.getItem(`standings_${season}`)
+  const existingStandings = await getStandingsFromDb(season)
 
-  if (storedInfo) {
-    // If found, parse and return the stored standings data
-    return JSON.parse(storedInfo)
+  if (existingStandings.length > 0) {
+    // If standings already exist in the database, return them
+    return existingStandings
   }
 
   try {
@@ -149,6 +148,7 @@ export async function getStandings(season: number) {
     if (Array.isArray(response.data) && response.data.length > 0) {
       // Map the response data to only include the necessary fields
       const standings = response.data.map((team: any) => ({
+        Season: team.Season,
         City: team.City,
         Name: team.Name,
         Wins: team.Wins,
@@ -159,6 +159,13 @@ export async function getStandings(season: number) {
         Streak: team.Streak
       }))
       console.log(standings)
+
+      // Send the data to the backend
+      await axios.post('http://localhost:5068/api/standings', standings, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
       return standings
     }
   } catch (error) {
@@ -167,6 +174,22 @@ export async function getStandings(season: number) {
 
   // Return an empty array if no standings data is found or an error occurs
   return []
+}
+
+export async function getStandingsFromDb(season: number) {
+  try {
+    const response = await axios.get(
+      `http://localhost:5068/api/standings/bySeason?season=${season}`
+    )
+
+    const standings = response.data as any[]
+    console.log(standings)
+    return standings
+  } catch (error) {
+    console.error('Error fetching NBA standings:', error)
+    // Handle the error or return an empty array if needed
+    return []
+  }
 }
 
 export async function getBoxScores(currentDate: string) {

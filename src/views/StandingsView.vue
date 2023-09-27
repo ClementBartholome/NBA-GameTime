@@ -29,15 +29,15 @@
           <tr v-for="(team, index) in sortedStandings" :key="index">
             <td>{{ index + 1 }}</td>
             <td class="team">
-              <img :src="teamLogos[team.Name]" alt="Team Logo" class="team-logo" />
-              <span>{{ team.City }} {{ team.Name }}</span>
+              <img :src="teamLogos[team.name]" alt="Team Logo" class="team-logo" />
+              <span>{{ team.city }} {{ team.name }}</span>
             </td>
-            <td>{{ team.Wins }}</td>
-            <td>{{ team.Losses }}</td>
-            <td>{{ team.Percentage }}</td>
-            <td>{{ team.LastTenWins }} - {{ team.LastTenLosses }}</td>
+            <td>{{ team.wins }}</td>
+            <td>{{ team.losses }}</td>
+            <td>{{ team.percentage }}</td>
+            <td>{{ team.lastTenWins }} - {{ team.lastTenLosses }}</td>
             <td>
-              {{ team.Streak > 0 ? 'W' + team.Streak : 'L' + Math.abs(team.Streak) }}
+              {{ team.streak > 0 ? 'W' + team.streak : 'L' + Math.abs(team.streak) }}
             </td>
           </tr>
         </tbody>
@@ -49,18 +49,19 @@
 <script setup lang="ts">
 import AppHeader from '../components/AppHeader.vue'
 import { ref, onMounted, computed } from 'vue'
-import { getStandings, getTeamInfoFromDb } from '../util/NbaApi'
+import { getStandings, getStandingsFromDb, getTeamInfoFromDb } from '../util/NbaApi'
 
 // Define the data structure for team standings
 interface TeamStandings {
-  City: string
-  Name: string
-  Wins: number
-  Losses: number
-  Percentage: number
-  LastTenWins: number
-  LastTenLosses: number
-  Streak: number
+  season: number
+  city: string
+  name: string
+  wins: number
+  losses: number
+  percentage: number
+  lastTenWins: number
+  lastTenLosses: number
+  streak: number
 }
 
 // Define and initialize reactive variables
@@ -74,15 +75,16 @@ const teamLogos = ref<{ [key: string]: string }>({}) // Store team logos with te
 
 // Function to fetch standings for the selected season
 const fetchStandings = async () => {
-  const fetchedStandings = await getStandings(selectedSeason.value)
+  await getStandings(selectedSeason.value)
+  const fetchedStandings = await getStandingsFromDb(selectedSeason.value)
   if (fetchedStandings) {
     standings.value = fetchedStandings
 
     // Fetch team logos and store them with team names as keys
     await Promise.all(
       fetchedStandings.map(async (team: any) => {
-        const logo = await getTeamInfoFromDb(team.Name).then((info) => info.logo)
-        teamLogos.value[team.Name] = logo
+        const logo = await getTeamInfoFromDb(team.name).then((info) => info.logo)
+        teamLogos.value[team.name] = logo
         return logo
       })
     )
@@ -94,7 +96,7 @@ onMounted(fetchStandings)
 
 // Compute sorted standings based on win percentage
 const sortedStandings = computed(() => {
-  return [...standings.value].sort((a, b) => b.Percentage - a.Percentage)
+  return [...standings.value].sort((a, b) => b.percentage - a.percentage)
 })
 </script>
 
