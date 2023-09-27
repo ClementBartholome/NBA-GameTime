@@ -64,8 +64,8 @@ export default {
         visitorTeamLogo.value = visitorTeamInfo.logo
         visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
 
-        console.log(homeTeamName.value)
-        console.log(props.gamesBoxScores)
+        // console.log(homeTeamName.value)
+        // console.log(props.gamesBoxScores)
 
         // Get the single box score for the specified teams
         const boxScore = getSingleBoxScore(
