@@ -2,7 +2,10 @@ import axios from 'axios'
 
 const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
 
-// GAMES DATA
+/* GAMES DATA
+ **
+ **
+ */
 
 export async function fetchAndSaveGames(currentDate: string) {
   const existingGames = await getGamesFromDb(currentDate)
@@ -62,7 +65,10 @@ export async function getGamesFromDb(currentDate: string) {
   }
 }
 
-// TEAMS DATA
+/* TEAMS DATA
+ **
+ **
+ */
 
 export async function fetchAndSaveTeamInfo(teamName: string) {
   const existingTeamInfo = await getTeamInfoFromDb(teamName)
@@ -131,7 +137,11 @@ export async function getTeamInfoFromDb(teamName: string) {
   }
 }
 
-// Function to get NBA standings
+/* STANDING DATA
+ **
+ **
+ */
+
 export async function getStandings(season: number) {
   const existingStandings = await getStandingsFromDb(season)
 
@@ -191,6 +201,11 @@ export async function getStandingsFromDb(season: number) {
     return []
   }
 }
+
+/* BOX SCORES DATA
+ **
+ **
+ */
 
 export async function getBoxScores(currentDate: string) {
   try {
