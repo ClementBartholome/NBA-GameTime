@@ -1,6 +1,7 @@
 import axios from 'axios'
+import config from '@/config/config'
 
-const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
+const apiKey = config.apiKey
 
 /* GAMES DATA
  **
