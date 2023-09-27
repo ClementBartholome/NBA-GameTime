@@ -8,6 +8,7 @@ public class Game
     public string visitor_team_full_name { get; set; }
     public int home_team_score { get; set; }
     public int visitor_team_score { get; set; }
+    public string gameDate { get; set; }
 
     public Game() {
         id = 0;
@@ -18,5 +19,6 @@ public class Game
         visitor_team_full_name = "";
         home_team_score = 0;
         visitor_team_score = 0;
+        gameDate = "";
     }
 }

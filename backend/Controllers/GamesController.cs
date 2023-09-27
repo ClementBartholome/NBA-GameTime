@@ -19,12 +19,16 @@ namespace backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGames()
+        [Route("byDate")]
+        public async Task<ActionResult<IEnumerable<Game>>> GetGamesByDate([FromQuery] string gameDate)
         {
             try
             {
-                // Get all games from database
-                var games = await _dbContext.Games.ToListAsync();
+                // Get games for the specified date from the database
+                var games = await _dbContext.Games
+                    .Where(game => game.gameDate == gameDate)
+                    .ToListAsync();
+
                 return Ok(games);
             }
             catch (Exception ex)
@@ -33,11 +37,21 @@ namespace backend.Controllers
             }
         }
 
+
         [HttpPost]
         public async Task<ActionResult> AddGames([FromBody] List<Game> games)
         {
             try
             {
+                // Check if games for this date already exist in database
+                bool gamesExist = await _dbContext.Games
+                    .AnyAsync(game => game.gameDate == games.First().gameDate);
+
+                if (gamesExist)
+                {
+                    return Ok("Matchs déjà ajoutés pour cette date.");
+                }
+
                 // Add games to database
                 await _dbContext.Games.AddRangeAsync(games);
                 await _dbContext.SaveChangesAsync();

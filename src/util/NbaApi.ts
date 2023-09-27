@@ -8,59 +8,57 @@ interface TeamInfo {
 
 const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
 
-export async function fetchGames(currentDate: string) {
-  try {
-    const cachedData = localStorage.getItem(currentDate)
+export async function fetchAndSaveGames(currentDate: string) {
+  const existingGames = await getGamesFromDb(currentDate)
 
-    if (cachedData) {
-      return JSON.parse(cachedData)
-    } else {
-      const response = await axios.get('https://www.balldontlie.io/api/v1/games', {
-        params: {
-          start_date: currentDate,
-          end_date: currentDate
-        }
-      })
+  if (existingGames.length > 0) {
+    // If games already exist in the database, return them
+    return existingGames
+  }
 
-      const games = response.data.data as any[]
-
-      // Store fetched data in local cache
-
-      // const simplifiedGames = games.map((game) => ({
-      //   id: game.id,
-      //   home_team: {
-      //     name: game.home_team.name,
-      //     full_name: game.home_team.full_name
-      //   },
-      //   visitor_team: {
-      //     name: game.visitor_team.name,
-      //     full_name: game.visitor_team.full_name
-      //   },
-      //   home_team_score: game.home_team_score,
-      //   visitor_team_score: game.visitor_team_score
-      // }))
-
-      const simplifiedGames = games.map((game) => ({
-        gameID: game.id,
-        home_team_name: game.home_team.name,
-        home_team_full_name: game.home_team.full_name,
-        visitor_team_name: game.visitor_team.name,
-        visitor_team_full_name: game.visitor_team.full_name,
-        home_team_score: game.home_team_score,
-        visitor_team_score: game.visitor_team_score
-      }))
-
-      // Send the data to the backend
-      await axios.post('http://localhost:5068/api/games', simplifiedGames, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-
-      localStorage.setItem(currentDate, JSON.stringify(simplifiedGames))
-      console.log(simplifiedGames)
-      return simplifiedGames
+  const response = await axios.get('https://www.balldontlie.io/api/v1/games', {
+    params: {
+      start_date: currentDate,
+      end_date: currentDate
     }
+  })
+
+  const games = response.data.data as any[]
+
+  if (games === undefined || games.length === 0) {
+    return []
+  }
+
+  const simplifiedGames = games.map((game) => ({
+    gameID: game.id,
+    home_team_name: game.home_team.name,
+    home_team_full_name: game.home_team.full_name,
+    visitor_team_name: game.visitor_team.name,
+    visitor_team_full_name: game.visitor_team.full_name,
+    home_team_score: game.home_team_score,
+    visitor_team_score: game.visitor_team_score,
+    gameDate: currentDate
+  }))
+
+  // Send the data to the backend
+  await axios.post('http://localhost:5068/api/games', simplifiedGames, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+
+  return simplifiedGames
+}
+
+export async function getGamesFromDb(currentDate: string) {
+  try {
+    const response = await axios.get(
+      `http://localhost:5068/api/games/byDate?gameDate=${currentDate}`
+    )
+
+    const games = response.data as any[]
+
+    return games
   } catch (error) {
     console.error('Error fetching NBA games:', error)
     // Handle the error or return an empty array if needed

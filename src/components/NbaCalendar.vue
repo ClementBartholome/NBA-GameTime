@@ -40,7 +40,7 @@
 import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
-import { fetchGames, getBoxScores } from '../util/NbaApi'
+import { fetchAndSaveGames, getGamesFromDb, getBoxScores } from '../util/NbaApi'
 import { useGamesStore } from '../stores/GamesStore'
 
 export default {
@@ -92,7 +92,8 @@ export default {
     async updateGames() {
       try {
         // Fetch NBA games for the current date
-        const games = await fetchGames(this.currentDate)
+        await fetchAndSaveGames(this.currentDate)
+        const games = await getGamesFromDb(this.currentDate)
         this.games = games
         console.log(this.games)
       } catch (error) {
@@ -155,8 +156,8 @@ export default {
       // Update currentDate with the selected date
       this.currentDate = selectedDate.toISOString().split('T')[0]
 
-      // Fetch NBA games for the new date
-      this.updateGames()
+      // // Fetch NBA games for the new date
+      // this.updateGames()
     },
     prevWeek() {
       // Go back one week by subtracting 7 days from currentDate
@@ -164,8 +165,8 @@ export default {
       prevDate.setDate(prevDate.getDate() - 7)
       this.currentDate = prevDate.toISOString().split('T')[0]
 
-      // Fetch NBA games for the new week and update selectedWeek
-      this.updateGames()
+      // // Fetch NBA games for the new week and update selectedWeek
+      // this.updateGames()
       this.updateSelectedWeek()
     },
     nextWeek() {
@@ -174,8 +175,8 @@ export default {
       nextDate.setDate(nextDate.getDate() + 7)
       this.currentDate = nextDate.toISOString().split('T')[0]
 
-      // Fetch NBA games for the new week and update selectedWeek
-      this.updateGames()
+      // // Fetch NBA games for the new week and update selectedWeek
+      // this.updateGames()
       this.updateSelectedWeek()
     }
   }
