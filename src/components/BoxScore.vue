@@ -1,42 +1,54 @@
 <template>
   <div class="box-score">
     <div class="team">
-      <h2>Home team</h2>
-      <ul>
-        <li v-for="(player, index) in sortedHomeTeamPlayers" :key="index" class="player">
-          <div class="player-info">
-            <h3>{{ player.Name }}</h3>
-            <template v-if="player.Minutes === 0">
-              <p>DNP</p>
-            </template>
-            <template v-else>
-              <p>Points: {{ player.Points }}</p>
-              <p>Rebounds: {{ player.Rebounds }}</p>
-              <p>Assists: {{ player.Assists }}</p>
-              <p>Minutes : {{ player.Minutes }}</p>
-            </template>
-          </div>
-        </li>
-      </ul>
+      <h2>{{ homeTeamName }}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Player</th>
+            <th>PTS</th>
+            <th>REB</th>
+            <th>AST</th>
+            <th>MIN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(player, index) in sortedHomeTeamPlayers" :key="index">
+            <td>{{ player.Started ? 'Starter' : 'Bench' }}</td>
+            <td>{{ player.Name }}</td>
+            <td>{{ player.Points }}</td>
+            <td>{{ player.Rebounds }}</td>
+            <td>{{ player.Assists }}</td>
+            <td>{{ player.Minutes }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
     <div class="team">
-      <h2>Away team</h2>
-      <ul>
-        <li v-for="(player, index) in sortedVisitorTeamPlayers" :key="index" class="player">
-          <div class="player-info">
-            <h3>{{ player.Name }}</h3>
-            <template v-if="player.Minutes === 0">
-              <p>DNP</p>
-            </template>
-            <template v-else>
-              <p>Points: {{ player.Points }}</p>
-              <p>Rebounds: {{ player.Rebounds }}</p>
-              <p>Assists: {{ player.Assists }}</p>
-              <p>Minutes : {{ player.Minutes }}</p>
-            </template>
-          </div>
-        </li>
-      </ul>
+      <h2>{{ visitorTeamName }}</h2>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Player</th>
+            <th>PTS</th>
+            <th>REB</th>
+            <th>AST</th>
+            <th>MIN</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(player, index) in sortedVisitorTeamPlayers" :key="index">
+            <td>{{ player.Started ? 'Starter' : 'Bench' }}</td>
+            <td>{{ player.Name }}</td>
+            <td>{{ player.Points }}</td>
+            <td>{{ player.Rebounds }}</td>
+            <td>{{ player.Assists }}</td>
+            <td>{{ player.Minutes }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
@@ -54,7 +66,9 @@ interface PlayerStats {
 
 export default {
   props: {
-    playerStats: Array<PlayerStats>
+    playerStats: Array<PlayerStats>,
+    homeTeamName: String,
+    visitorTeamName: String
   },
   computed: {
     homeTeamPlayers() {
@@ -76,38 +90,68 @@ export default {
   },
   methods: {
     sortPlayersByStarted(players: PlayerStats[]) {
-      // Starters are displayed first (Started = 1), bench players then (Started = 0)
-      return players.slice().sort((a, b) => b.Started - a.Started)
+      // Sort players by Started (0 or 1), then by Minutes
+      return players.slice().sort((a, b) => {
+        if (a.Started === b.Started) {
+          return b.Minutes - a.Minutes
+        }
+        return b.Started - a.Started
+      })
     }
   }
 }
 </script>
 
 <style scoped>
+/* General Box Score Styling */
 .box-score {
   display: flex;
   justify-content: space-between;
-  background-color: #f0f0f0;
+  background-color: #fff;
   padding: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid #ddd;
   margin: 20px;
-  color: black;
+  color: #333;
+  font-family: Arial, sans-serif;
 }
 
 .team {
   flex: 1;
-  background-color: #fff;
+}
+
+/* Team Headers */
+.team h2 {
+  margin: 0;
+  font-size: 24px;
+  text-align: center;
+  background-color: #f0f0f0;
   padding: 10px;
+  border-bottom: 2px solid #333;
+}
+
+/* Table Styling */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+table th,
+table td {
+  padding: 8px 10px;
+  text-align: center;
   border: 1px solid #ddd;
 }
 
-.player {
-  margin-bottom: 10px;
+table th {
+  background-color: #f0f0f0;
+  font-weight: bold;
 }
 
-.player-info {
-  background-color: #f9f9f9;
-  padding: 10px;
-  border: 1px solid #ccc;
+/* Did Not Play Styling */
+td:empty::before {
+  content: 'DNP';
+  font-weight: bold;
+  color: #999;
 }
 </style>

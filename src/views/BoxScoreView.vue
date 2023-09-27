@@ -2,7 +2,11 @@
   <AppHeader />
   <main>
     <h1>Box Score for the game {{ gameId }}</h1>
-    <BoxScore :playerStats="playerStats" />
+    <BoxScore
+      :playerStats="playerStats"
+      :homeTeamName="homeTeamName"
+      :visitorTeamName="visitorTeamName"
+    />
   </main>
 </template>
 
