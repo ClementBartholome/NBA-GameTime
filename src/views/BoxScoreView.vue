@@ -23,13 +23,20 @@ export default {
   },
   computed: {
     gameId() {
-      return this.$route.params.gameId
+      // If the gameId is an array, return the first element
+      return Array.isArray(this.$route.params.gameId)
+        ? this.$route.params.gameId[0]
+        : this.$route.params.gameId
     },
     homeTeamName() {
-      return this.$route.params.homeTeamName
+      return Array.isArray(this.$route.params.homeTeamName)
+        ? this.$route.params.homeTeamName[0]
+        : this.$route.params.homeTeamName
     },
     visitorTeamName() {
-      return this.$route.params.visitorTeamName
+      return Array.isArray(this.$route.params.visitorTeamName)
+        ? this.$route.params.visitorTeamName[0]
+        : this.$route.params.visitorTeamName
     },
     gamesBoxScores() {
       return useGamesStore().gamesBoxScores
