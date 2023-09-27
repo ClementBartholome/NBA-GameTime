@@ -26,33 +26,13 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, type PropType } from 'vue'
-import { getTeamInfo } from '../util/NbaApi'
+import { ref, onMounted } from 'vue'
+import { fetchAndSaveTeamInfo } from '../util/NbaApi'
 import { getSingleBoxScore } from '../util/NbaUtil'
-
-interface Game {
-  home_team_name: string
-  home_team_full_name: string
-  visitor_team_name: string
-  visitor_team_full_name: string
-  home_team_score: number
-  visitor_team_score: number
-
-  // home_team: {
-  //   name: string
-  //   full_name: string
-  // }
-  // visitor_team: {
-  //   name: string
-  //   full_name: string
-  // }
-  // home_team_score: number
-  // visitor_team_score: number
-}
 
 export default {
   props: {
-    game: Object as PropType<Game>,
+    game: Object,
     gamesBoxScores: Array
   },
   setup(props) {
@@ -66,24 +46,26 @@ export default {
     const gameID = ref(0)
 
     onMounted(async () => {
-      console.log(props.game)
+      // console.log(props.game)
       // Check if game data and gamesBoxScores are available and not empty
       if (props.game && props.gamesBoxScores && props.gamesBoxScores.length > 0) {
         // Fetch home team information
-        console.log(props.game.home_team_name)
-        const homeTeamInfo = await getTeamInfo(props.game.home_team_name)
+        const homeTeamInfo = await fetchAndSaveTeamInfo(props.game.home_team_name)
         // Fetch visitor team information
-        const visitorTeamInfo = await getTeamInfo(props.game.visitor_team_name)
+        const visitorTeamInfo = await fetchAndSaveTeamInfo(props.game.visitor_team_name)
 
         // Set home team properties
-        homeTeamName.value = homeTeamInfo.teamName
+        homeTeamName.value = homeTeamInfo.teamKey
         homeTeamLogo.value = homeTeamInfo.logo
         homeTeamColor.value = '#' + homeTeamInfo.primaryColor
 
         // Set visitor team properties
-        visitorTeamName.value = visitorTeamInfo.teamName
+        visitorTeamName.value = visitorTeamInfo.teamKey
         visitorTeamLogo.value = visitorTeamInfo.logo
         visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
+
+        console.log(homeTeamName.value)
+        console.log(props.gamesBoxScores)
 
         // Get the single box score for the specified teams
         const boxScore = getSingleBoxScore(

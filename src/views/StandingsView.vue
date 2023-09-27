@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import AppHeader from '../components/AppHeader.vue'
 import { ref, onMounted, computed } from 'vue'
-import { getStandings, getTeamInfo } from '../util/NbaApi'
+import { getStandings, getTeamInfoFromDb } from '../util/NbaApi'
 
 // Define the data structure for team standings
 interface TeamStandings {
@@ -81,7 +81,7 @@ const fetchStandings = async () => {
     // Fetch team logos and store them with team names as keys
     await Promise.all(
       fetchedStandings.map(async (team: any) => {
-        const logo = await getTeamInfo(team.Name).then((info) => info.logo)
+        const logo = await getTeamInfoFromDb(team.Name).then((info) => info.logo)
         teamLogos.value[team.Name] = logo
         return logo
       })

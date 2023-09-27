@@ -1,12 +1,8 @@
 import axios from 'axios'
 
-interface TeamInfo {
-  logo: string
-  primaryColor: string
-  teamName: string
-}
-
 const apiKey = 'c8d641b0d5f54e6ba908f0066da32747'
+
+// GAMES DATA
 
 export async function fetchAndSaveGames(currentDate: string) {
   const existingGames = await getGamesFromDb(currentDate)
@@ -66,40 +62,41 @@ export async function getGamesFromDb(currentDate: string) {
   }
 }
 
-// Get team information by name
-export async function getTeamInfo(teamName: string) {
-  // Check if team info is already stored in localStorage
-  const storedInfo = localStorage.getItem(`${teamName}_info`)
+// TEAMS DATA
 
-  if (storedInfo) {
-    // If found, parse and return the stored info
-    return JSON.parse(storedInfo) as TeamInfo
+export async function fetchAndSaveTeamInfo(teamName: string) {
+  const existingTeamInfo = await getTeamInfoFromDb(teamName)
+
+  if (existingTeamInfo.teamName !== 'Undefined') {
+    // If team information already exists in the database, return it
+    return existingTeamInfo
   }
 
   try {
-    // Fetch team data from the API
     const response = await axios.get(
       `https://api.sportsdata.io/v3/nba/scores/json/teams?key=${apiKey}`
-      // 1000 calls per month limit
     )
 
     if (Array.isArray(response.data) && response.data.length > 0) {
-      // Find the team by name in the API response
       const team = response.data.find((t: any) => t.Name === teamName)
+      console.log(teamName)
       console.log(team)
 
       if (team) {
-        // Create a TeamInfo object with logo and primaryColor
-        const teamInfo: TeamInfo = {
+        const teamInfo = {
           logo: team.WikipediaLogoUrl,
           primaryColor: team.PrimaryColor,
-          teamName: team.Key
+          teamKey: team.Key,
+          teamName: team.Name
         }
 
-        // Store the team info in localStorage
-        localStorage.setItem(`${teamName}_info`, JSON.stringify(teamInfo))
-
-        // Return the team info
+        // Send the data to the backend
+        await axios.post('http://localhost:5068/api/teams', teamInfo, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        console.log(teamInfo)
         return teamInfo
       }
     }
@@ -107,7 +104,26 @@ export async function getTeamInfo(teamName: string) {
     console.error('Error fetching team information:', error)
   }
 
-  // Return default values if no data is found
+  // If no team information is found or an error occurs, return default values
+  return {
+    logo: 'https://www.1min30.com/wp-content/uploads/2018/03/logo-NBA.jpg',
+    primaryColor: 'ffffff',
+    teamName: 'Undefined'
+  }
+}
+
+export async function getTeamInfoFromDb(teamName: string) {
+  try {
+    const response = await axios.get(`http://localhost:5068/api/teams/${teamName}`)
+
+    if (response.data) {
+      return response.data
+    }
+  } catch (error) {
+    console.error('Error fetching team information from DB:', error)
+  }
+
+  // If no team information is found or an error occurs, return default values
   return {
     logo: 'https://www.1min30.com/wp-content/uploads/2018/03/logo-NBA.jpg',
     primaryColor: 'ffffff',

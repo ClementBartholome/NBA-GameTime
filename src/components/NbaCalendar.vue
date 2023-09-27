@@ -95,7 +95,7 @@ export default {
         await fetchAndSaveGames(this.currentDate)
         const games = await getGamesFromDb(this.currentDate)
         this.games = games
-        console.log(this.games)
+        // console.log(this.games)
       } catch (error) {
         console.error('Erreur lors de la mise à jour des matchs :', error)
       }

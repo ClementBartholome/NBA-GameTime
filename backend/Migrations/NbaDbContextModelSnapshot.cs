@@ -110,6 +110,10 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("teamKey")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<string>("teamName")
                         .IsRequired()
                         .HasColumnType("longtext");
