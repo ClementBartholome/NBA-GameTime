@@ -124,6 +124,7 @@ export default {
 
 .game-card h2 {
   font-size: 1.3rem;
+  text-align: center;
 }
 
 .game-card img {
@@ -139,9 +140,10 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: space-between;
   padding: 1rem;
   border-radius: 5px;
-  width: 275px;
+  width: 50%;
 }
 
 .game-card:hover {
@@ -154,5 +156,14 @@ export default {
 
 .winner {
   font-weight: 700;
+}
+
+@media (max-width: 500px) {
+  .game-card {
+    gap: 1rem;
+  }
+  .game-card img {
+    width: 100%;
+  }
 }
 </style>

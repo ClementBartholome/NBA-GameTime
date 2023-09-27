@@ -1,31 +1,33 @@
 <template>
-  <div class="calendar-picker">
-    <div class="calendar-header">
-      <button @click="prevMonth">&lt;</button>
-      <span>{{ currentMonth }}</span>
-      <button @click="nextMonth">&gt;</button>
+  <div class="calendar-container">
+    <div class="calendar-picker">
+      <div class="calendar-header">
+        <button @click="prevMonth">&lt;</button>
+        <span>{{ currentMonth }}</span>
+        <button @click="nextMonth">&gt;</button>
+      </div>
+      <table class="calendar-table">
+        <!-- Table headers -->
+        <thead>
+          <tr>
+            <th v-for="day in daysOfWeek" :key="day">{{ day }}</th>
+          </tr>
+        </thead>
+        <!-- Table body with days -->
+        <tbody>
+          <tr v-for="week in calendar" :key="week[0].toString()">
+            <td
+              v-for="day in week"
+              :key="day.toString()"
+              @click="selectDate(day)"
+              :class="{ selected: isDateSelected(day) }"
+            >
+              {{ day.getDate() }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
-    <table class="calendar-table">
-      <!-- Table headers -->
-      <thead>
-        <tr>
-          <th v-for="day in daysOfWeek" :key="day">{{ day }}</th>
-        </tr>
-      </thead>
-      <!-- Table body with days -->
-      <tbody>
-        <tr v-for="week in calendar" :key="week[0].toString()">
-          <td
-            v-for="day in week"
-            :key="day.toString()"
-            @click="selectDate(day)"
-            :class="{ selected: isDateSelected(day) }"
-          >
-            {{ day.getDate() }}
-          </td>
-        </tr>
-      </tbody>
-    </table>
   </div>
 </template>
 
@@ -131,16 +133,26 @@ export default {
 </script>
 
 <style scoped>
+.calendar-container {
+  display: flex;
+  justify-content: center;
+  min-height: 100vh;
+  position: absolute;
+  top: 150px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
 .calendar-picker {
   text-align: center;
-  position: absolute;
-  top: 120px;
-  right: 542px;
   border: 1px solid #ccc;
   z-index: 999;
   background-color: #f0f0f0;
   color: black;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  width: 320px;
+  height: fit-content;
 }
 
 .calendar-header {

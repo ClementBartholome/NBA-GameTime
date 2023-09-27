@@ -221,6 +221,8 @@ section.calendar {
   align-items: center;
   cursor: pointer;
   gap: 4rem;
+  position: relative;
+  z-index: 9999;
 }
 
 #calendar-input {
@@ -230,6 +232,11 @@ section.calendar {
 .game-list {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-list li {
+  width: 100%;
 }
 </style>
 

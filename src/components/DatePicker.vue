@@ -62,4 +62,11 @@ export default {
   background-color: #f0f0f0;
   color: #000;
 }
+
+@media (max-width: 500px) {
+  .date-picker {
+    gap: 0;
+    font-size: 14px;
+  }
+}
 </style>
