@@ -94,7 +94,7 @@ const fetchStandings = async () => {
 // Call the fetchStandings function when the component is mounted
 onMounted(fetchStandings)
 
-// Compute sorted standings based on win percentage
+// Sort standings based on win percentage
 const sortedStandings = computed(() => {
   return [...standings.value].sort((a, b) => b.percentage - a.percentage)
 })
