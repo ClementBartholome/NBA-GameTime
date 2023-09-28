@@ -237,10 +237,9 @@ section.calendar {
 
 .game-list li {
   width: 100%;
+  max-width: 430px;
 }
-</style>
 
-<style scoped>
 .date-picker {
   display: flex;
   align-items: center;
@@ -260,28 +259,9 @@ section.calendar {
   gap: 2rem;
 }
 
-.calendar-input {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.calendar-icon {
-  margin-right: 10px;
-  font-size: 1.25rem;
-  color: #888;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  gap: 4rem;
-}
-
-#calendar-input {
-  display: none;
-}
-
-.game-list {
-  display: flex;
-  flex-wrap: wrap;
+@media (max-width: 860px) {
+  .game-list li {
+    max-width: 600px;
+  }
 }
 </style>

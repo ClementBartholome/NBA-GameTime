@@ -117,6 +117,7 @@ export default {
   padding: 1rem;
   margin: 1rem;
   border-radius: 5px;
+  height: 270px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: #ffffff;
   transition: transform 0.2s ease-in-out;
@@ -160,10 +161,17 @@ export default {
 
 @media (max-width: 500px) {
   .game-card {
-    gap: 1rem;
+    gap: 0;
+    padding: 0;
+    height: 200px;
   }
   .game-card img {
     width: 100%;
+    height: 80px;
+  }
+  .home-team,
+  .away-team {
+    border-radius: 0;
   }
 }
 </style>

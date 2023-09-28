@@ -1,18 +1,17 @@
 <template>
-  <div>
-    <AppHeader />
-    <main>
-      <h1>NBA Regular Season Standings</h1>
-      <label for="seasonSelect">Select Season:</label>
-      <select
-        id="seasonSelect"
-        class="season-selector"
-        v-model="selectedSeason"
-        @change="fetchStandings"
-      >
-        <option v-for="year in availableSeasons" :key="year" :value="year">{{ year }}</option>
-      </select>
-
+  <AppHeader />
+  <main>
+    <h1>NBA Regular Season Standings</h1>
+    <label for="seasonSelect">Select Season:</label>
+    <select
+      id="seasonSelect"
+      class="season-selector"
+      v-model="selectedSeason"
+      @change="fetchStandings"
+    >
+      <option v-for="year in availableSeasons" :key="year" :value="year">{{ year }}</option>
+    </select>
+    <div class="table-container">
       <table class="standings-table">
         <thead>
           <tr>
@@ -35,15 +34,15 @@
             <td>{{ team.wins }}</td>
             <td>{{ team.losses }}</td>
             <td>{{ team.percentage }}</td>
-            <td>{{ team.lastTenWins }} - {{ team.lastTenLosses }}</td>
+            <td>{{ team.lastTenWins }}-{{ team.lastTenLosses }}</td>
             <td>
               {{ team.streak > 0 ? 'W' + team.streak : 'L' + Math.abs(team.streak) }}
             </td>
           </tr>
         </tbody>
       </table>
-    </main>
-  </div>
+    </div>
+  </main>
 </template>
 
 <script setup lang="ts">
@@ -101,6 +100,31 @@ const sortedStandings = computed(() => {
 </script>
 
 <style scoped>
+main h1,
+main label {
+  padding: 1rem;
+}
+.table-container {
+  width: 100%;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  margin-bottom: 2rem; /* Add some margin to separate from the header */
+}
+
+/* Fix the "Rank" and "Team" columns to the left */
+/* .standings-table {
+  width: auto;
+  position: relative;
+}
+
+.standings-table thead th:nth-child(-n + 3),
+.standings-table tbody td:nth-child(-n + 3) {
+  position: -webkit-sticky;
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background-color: #181818;
+} */
+
 .season-selector {
   padding: 0.5rem 2rem 0.5rem 0.75rem;
   line-height: 1.25;
@@ -146,5 +170,16 @@ const sortedStandings = computed(() => {
   background-color: #071a21;
   color: #fff;
   font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .standings-table th,
+  .standings-table td {
+    padding: 4px 8px;
+  }
+  .team-logo {
+    max-height: 40px;
+    max-width: 40px;
+  }
 }
 </style>

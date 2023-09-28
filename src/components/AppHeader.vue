@@ -36,6 +36,12 @@ export default {
   methods: {
     toggleMobileMenu() {
       this.showMobileMenu = !this.showMobileMenu
+
+      if (this.showMobileMenu) {
+        document.body.classList.add('mobile-menu-open')
+      } else {
+        document.body.classList.remove('mobile-menu-open')
+      }
     }
   }
 }
@@ -46,9 +52,12 @@ header {
   display: flex;
   align-items: center;
   padding: 1rem;
-  background-color: rgba(0, 0, 0, 0.171);
+  background-color: rgba(0, 0, 0, 1);
   color: #fff;
   margin-bottom: 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 9999;
 }
 
 .header-container {
@@ -98,6 +107,10 @@ header img {
   background-color: #fff;
   margin: 6px 0;
   transition: transform 0.3s ease;
+}
+
+body.mobile-menu-open {
+  overflow: hidden;
 }
 
 .mobile-menu-content {
