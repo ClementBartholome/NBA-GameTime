@@ -1,10 +1,12 @@
 <template>
   <header>
     <div class="header-container">
-      <div class="logo">
-        <img src="../assets/nba-logo.svg" alt="" />
-        <h1>NBA GameTime</h1>
-      </div>
+      <router-link to="/">
+        <div class="logo">
+          <img src="../assets/nba-logo.svg" alt="" />
+          <h1>NBA GameTime</h1>
+        </div>
+      </router-link>
       <nav>
         <router-link to="/">Games</router-link>
         <router-link to="/standings">Standings</router-link>
