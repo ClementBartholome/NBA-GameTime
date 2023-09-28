@@ -1,7 +1,10 @@
 <template>
   <div class="box-score">
     <div class="team">
-      <h2>{{ homeTeamName }}</h2>
+      <div class="team-header">
+        <img :src="homeTeamInfo.logo" alt="Team Logo" />
+        <h2>{{ homeTeamInfo.teamName }}</h2>
+      </div>
       <div class="table-container">
         <table>
           <thead>
@@ -28,7 +31,10 @@
       </div>
     </div>
     <div class="team">
-      <h2>{{ visitorTeamName }}</h2>
+      <div class="team-header">
+        <h2>{{ visitorTeamInfo.teamName }}</h2>
+        <img :src="visitorTeamInfo.logo" alt="Home team logo" />
+      </div>
       <div class="table-container">
         <table>
           <thead>
@@ -58,6 +64,8 @@
 </template>
 
 <script lang="ts">
+import { useTeamStore } from '../stores/TeamsStore'
+
 interface PlayerStats {
   Name: string
   Minutes: number
@@ -70,9 +78,7 @@ interface PlayerStats {
 
 export default {
   props: {
-    playerStats: Array<PlayerStats>,
-    homeTeamName: String,
-    visitorTeamName: String
+    playerStats: Array<PlayerStats>
   },
   computed: {
     homeTeamPlayers() {
@@ -90,6 +96,13 @@ export default {
     },
     sortedVisitorTeamPlayers() {
       return this.sortPlayersByStarted(this.visitorTeamPlayers)
+    },
+    homeTeamInfo() {
+      console.log(useTeamStore().homeTeamInfo)
+      return useTeamStore().homeTeamInfo
+    },
+    visitorTeamInfo() {
+      return useTeamStore().visitorTeamInfo
     }
   },
   methods: {
@@ -123,13 +136,24 @@ export default {
 }
 
 /* Team Headers */
-.team h2 {
+
+.team-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
   margin: 0;
-  font-size: 24px;
   text-align: center;
   background-color: #f0f0f0;
   padding: 10px;
   border-bottom: 2px solid #333;
+}
+
+.team-header img {
+  height: 40px;
+}
+.team h2 {
+  font-size: 24px;
 }
 
 /* Table Styling */

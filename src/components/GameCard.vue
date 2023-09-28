@@ -29,6 +29,7 @@
 import { ref, onMounted } from 'vue'
 import { fetchAndSaveTeamInfo } from '../util/NbaApi'
 import { getSingleBoxScore } from '../util/NbaUtil'
+import { useTeamStore } from '../stores/TeamsStore'
 
 export default {
   props: {
@@ -45,6 +46,8 @@ export default {
 
     const gameID = ref(0)
 
+    const teamStore = useTeamStore()
+
     onMounted(async () => {
       // console.log(props.game)
       // Check if game data and gamesBoxScores are available and not empty
@@ -53,6 +56,11 @@ export default {
         const homeTeamInfo = await fetchAndSaveTeamInfo(props.game.home_team_name)
         // Fetch visitor team information
         const visitorTeamInfo = await fetchAndSaveTeamInfo(props.game.visitor_team_name)
+
+        // Set home team properties in the store
+        teamStore.setHomeTeamInfo(homeTeamInfo)
+        // Set visitor team properties in the store
+        teamStore.setVisitorTeamInfo(visitorTeamInfo)
 
         // Set home team properties
         homeTeamName.value = homeTeamInfo.teamKey
