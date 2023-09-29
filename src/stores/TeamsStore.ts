@@ -1,16 +1,23 @@
 import { defineStore } from 'pinia'
 
+interface TeamInfo {
+  gameId: number
+  homeTeamInfo: Object
+  visitorTeamInfo: Object
+}
+
 export const useTeamStore = defineStore('team', {
   state: () => ({
-    homeTeamInfo: null,
-    visitorTeamInfo: null
+    teamsInfo: [] as TeamInfo[]
   }),
   actions: {
-    setHomeTeamInfo(info: any) {
-      this.homeTeamInfo = info
+    // Add team information for a specific game
+    addTeamInfo(teamInfo: TeamInfo) {
+      this.teamsInfo.push(teamInfo)
     },
-    setVisitorTeamInfo(info: any) {
-      this.visitorTeamInfo = info
+    // Retrieve team information for a specific game
+    getTeamInfo(gameId: number): TeamInfo | undefined {
+      return this.teamsInfo.find((info) => info.gameId === gameId)
     }
   }
 })
