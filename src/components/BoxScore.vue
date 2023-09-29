@@ -9,7 +9,6 @@
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Player</th>
               <th>PTS</th>
               <th>REB</th>
@@ -18,13 +17,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(player, index) in sortedHomeTeamPlayers" :key="index">
-              <td>{{ player.Started ? 'Starter' : 'Bench' }}</td>
+            <tr
+              v-for="(player, index) in sortedHomeTeamPlayers"
+              :key="index"
+              :class="{ starter: player.Started, bench: !player.Started }"
+            >
               <td>{{ player.Name }}</td>
-              <td>{{ player.Points }}</td>
-              <td>{{ player.Rebounds }}</td>
-              <td>{{ player.Assists }}</td>
-              <td>{{ player.Minutes }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Points }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Rebounds }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Assists }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Minutes }}</td>
+              <td v-else colspan="4">DNP</td>
             </tr>
           </tbody>
         </table>
@@ -39,7 +42,6 @@
         <table>
           <thead>
             <tr>
-              <th></th>
               <th>Player</th>
               <th>PTS</th>
               <th>REB</th>
@@ -48,13 +50,17 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(player, index) in sortedVisitorTeamPlayers" :key="index">
-              <td>{{ player.Started ? 'Starter' : 'Bench' }}</td>
+            <tr
+              v-for="(player, index) in sortedVisitorTeamPlayers"
+              :key="index"
+              :class="{ starter: player.Started, bench: !player.Started }"
+            >
               <td>{{ player.Name }}</td>
-              <td>{{ player.Points }}</td>
-              <td>{{ player.Rebounds }}</td>
-              <td>{{ player.Assists }}</td>
-              <td>{{ player.Minutes }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Points }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Rebounds }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Assists }}</td>
+              <td v-if="player.Minutes !== 0">{{ player.Minutes }}</td>
+              <td v-else colspan="4">DNP</td>
             </tr>
           </tbody>
         </table>
@@ -118,6 +124,10 @@ const visitorTeamInfo = computed(() => {
 </script>
 
 <style scoped>
+.starter {
+  background-color: #e0ffe0; /* Light green for starters */
+}
+
 .box-score {
   display: flex;
   justify-content: space-between;
@@ -175,13 +185,6 @@ table td {
 table th {
   background-color: #f0f0f0;
   font-weight: bold;
-}
-
-/* Did Not Play Styling */
-td:empty::before {
-  content: 'DNP';
-  font-weight: bold;
-  color: #999;
 }
 
 @media (max-width: 1024px) {
