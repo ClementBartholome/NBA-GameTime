@@ -33,7 +33,7 @@
     <div class="team">
       <div class="team-header">
         <h2>{{ visitorTeamInfo.teamName }}</h2>
-        <img :src="visitorTeamInfo.logo" alt="Home team logo" />
+        <img :src="visitorTeamInfo.logo" alt="Team logo" />
       </div>
       <div class="table-container">
         <table>
@@ -78,7 +78,8 @@ interface PlayerStats {
 
 export default {
   props: {
-    playerStats: Array<PlayerStats>
+    playerStats: Array<PlayerStats>,
+    gameId: String
   },
   computed: {
     homeTeamPlayers() {
@@ -98,11 +99,18 @@ export default {
       return this.sortPlayersByStarted(this.visitorTeamPlayers)
     },
     homeTeamInfo() {
-      console.log(useTeamStore().homeTeamInfo)
-      return useTeamStore().homeTeamInfo
+      const teamStore = useTeamStore()
+      // Convert gameId to a number
+      const gameIdNumber = parseInt(this.gameId, 10)
+      const teamInfo = teamStore.getTeamInfo(gameIdNumber)
+      return teamInfo ? teamInfo.homeTeamInfo : null
     },
     visitorTeamInfo() {
-      return useTeamStore().visitorTeamInfo
+      const teamStore = useTeamStore()
+      // Convert gameId to a number
+      const gameIdNumber = parseInt(this.gameId, 10)
+      const teamInfo = teamStore.getTeamInfo(gameIdNumber)
+      return teamInfo ? teamInfo.visitorTeamInfo : null
     }
   },
   methods: {
