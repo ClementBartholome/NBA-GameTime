@@ -127,7 +127,6 @@ const createCalendar = () => {
 .calendar-container {
   display: flex;
   justify-content: center;
-  min-height: 100vh;
   position: absolute;
   top: 150px;
   left: 0;
