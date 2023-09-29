@@ -63,8 +63,9 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { useTeamStore } from '../stores/TeamsStore'
+import { computed, defineProps } from 'vue'
 
 interface PlayerStats {
   Name: string
@@ -76,59 +77,47 @@ interface PlayerStats {
   Started: number
 }
 
-export default {
-  props: {
-    playerStats: Array<PlayerStats>,
-    gameId: String
-  },
-  computed: {
-    homeTeamPlayers() {
-      return this.playerStats
-        ? this.playerStats.filter((player) => player.HomeOrAway === 'HOME')
-        : []
-    },
-    visitorTeamPlayers() {
-      return this.playerStats
-        ? this.playerStats.filter((player) => player.HomeOrAway === 'AWAY')
-        : []
-    },
-    sortedHomeTeamPlayers() {
-      return this.sortPlayersByStarted(this.homeTeamPlayers)
-    },
-    sortedVisitorTeamPlayers() {
-      return this.sortPlayersByStarted(this.visitorTeamPlayers)
-    },
-    homeTeamInfo() {
-      const teamStore = useTeamStore()
-      // Convert gameId to a number
-      const gameIdNumber = parseInt(this.gameId, 10)
-      const teamInfo = teamStore.getTeamInfo(gameIdNumber)
-      return teamInfo ? teamInfo.homeTeamInfo : null
-    },
-    visitorTeamInfo() {
-      const teamStore = useTeamStore()
-      // Convert gameId to a number
-      const gameIdNumber = parseInt(this.gameId, 10)
-      const teamInfo = teamStore.getTeamInfo(gameIdNumber)
-      return teamInfo ? teamInfo.visitorTeamInfo : null
+const props = defineProps({
+  playerStats: Array<PlayerStats>,
+  gameId: String
+})
+
+const homeTeamPlayers = computed(() =>
+  props.playerStats ? props.playerStats.filter((player) => player.HomeOrAway === 'HOME') : []
+)
+
+const visitorTeamPlayers = computed(() =>
+  props.playerStats ? props.playerStats.filter((player) => player.HomeOrAway === 'AWAY') : []
+)
+
+const sortPlayersByStarted = (players: PlayerStats[]) => {
+  // Sort players by Started (0 or 1), then by Minutes
+  return players.slice().sort((a, b) => {
+    if (a.Started === b.Started) {
+      return b.Minutes - a.Minutes
     }
-  },
-  methods: {
-    sortPlayersByStarted(players: PlayerStats[]) {
-      // Sort players by Started (0 or 1), then by Minutes
-      return players.slice().sort((a, b) => {
-        if (a.Started === b.Started) {
-          return b.Minutes - a.Minutes
-        }
-        return b.Started - a.Started
-      })
-    }
-  }
+    return b.Started - a.Started
+  })
 }
+
+const sortedHomeTeamPlayers = computed(() => sortPlayersByStarted(homeTeamPlayers.value))
+const sortedVisitorTeamPlayers = computed(() => sortPlayersByStarted(visitorTeamPlayers.value))
+
+const teamStore = useTeamStore()
+
+const gameIdNumber = parseInt(props.gameId || '0', 10)
+const homeTeamInfo = computed(() => {
+  const teamInfo = teamStore.getTeamInfo(gameIdNumber)
+  return teamInfo ? teamInfo.homeTeamInfo : null
+})
+
+const visitorTeamInfo = computed(() => {
+  const teamInfo = teamStore.getTeamInfo(gameIdNumber)
+  return teamInfo ? teamInfo.visitorTeamInfo : null
+})
 </script>
 
 <style scoped>
-/* General Box Score Styling */
 .box-score {
   display: flex;
   justify-content: space-between;

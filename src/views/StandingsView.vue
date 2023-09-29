@@ -50,7 +50,6 @@ import AppHeader from '../components/AppHeader.vue'
 import { ref, onMounted, computed } from 'vue'
 import { getStandings, getStandingsFromDb, getTeamInfoFromDb } from '../util/NbaApi'
 
-// Define the data structure for team standings
 interface TeamStandings {
   season: number
   city: string
