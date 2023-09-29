@@ -2,8 +2,8 @@ import { defineStore } from 'pinia'
 
 interface TeamInfo {
   gameId: number
-  homeTeamInfo: Object
-  visitorTeamInfo: Object
+  homeTeamInfo: any
+  visitorTeamInfo: any
 }
 
 export const useTeamStore = defineStore('team', {
