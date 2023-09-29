@@ -19,8 +19,8 @@
             <th>Team</th>
             <th>Wins</th>
             <th>Losses</th>
-            <th>Win %</th>
-            <th>Last 10</th>
+            <th>Win%</th>
+            <th>L10</th>
             <th>Streak</th>
           </tr>
         </thead>
@@ -143,6 +143,13 @@ main label {
   background: white;
   padding: 0.2rem;
   border-radius: 20px;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+
+.team span {
+  display: inline-block;
+  width: 170px;
 }
 .standings-table {
   width: 100%;
@@ -154,12 +161,6 @@ main label {
   padding: 8px 12px;
   text-align: left;
   border-bottom: 1px solid #ccc;
-}
-
-.standings-table td.team {
-  display: flex;
-  align-items: center;
-  gap: 10px;
 }
 
 .standings-table tbody tr:last-child td {

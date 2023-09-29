@@ -31,103 +31,94 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  props: {
-    currentDate: String // Date format: 'YYYY-MM-DD'
-  },
-  data() {
-    return {
-      selectedDate: this.currentDate ? new Date(this.currentDate.replace(/-/g, '/')) : new Date(),
-      calendar: [] as Date[][],
-      currentMonth: ''
-    }
-  },
-  computed: {
-    daysOfWeek() {
-      return ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    }
-  },
-  watch: {
-    currentDate(newDate) {
-      // Update selectedDate when currentDate prop changes
-      this.selectedDate = new Date(newDate.replace(/-/g, '/'))
-      // Recalculate the calendar for the new month
-      this.createCalendar()
-      // Update currentMonth
-      this.currentMonth = this.selectedDate.toLocaleString('en-US', {
+<script setup lang="ts">
+import { ref, computed, watch, onMounted } from 'vue'
+
+const emit = defineEmits(['inFocus', 'submit', 'select'])
+
+const props = defineProps({
+  currentDate: String
+})
+
+const selectedDate = ref(
+  props.currentDate ? new Date(props.currentDate.replace(/-/g, '/')) : new Date()
+)
+const calendar = ref([] as Date[][])
+const currentMonth = ref('')
+
+const daysOfWeek = computed(() => ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'])
+
+watch(
+  () => props.currentDate,
+  (newDate) => {
+    if (newDate !== undefined) {
+      selectedDate.value = new Date(newDate.replace(/-/g, '/'))
+      createCalendar()
+      currentMonth.value = selectedDate.value.toLocaleString('en-US', {
         year: 'numeric',
         month: 'long'
       })
     }
-  },
-  mounted() {
-    // Create the initial calendar
-    this.createCalendar()
-    // Set currentMonth initially
-    this.currentMonth = this.selectedDate.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long'
-    })
-  },
-  methods: {
-    selectDate(date: Date) {
-      // Update the selectedDate and emit the selected date as a string
-      this.selectedDate = date
-      this.$emit('select', date.toISOString().split('T')[0])
-    },
-    isDateSelected(date: Date) {
-      // Check if the date is selected (compared to the currentDate prop)
-      return date.toISOString().split('T')[0] === this.currentDate
-    },
-    prevMonth() {
-      // Move to the previous month and recreate the calendar
-      this.selectedDate.setMonth(this.selectedDate.getMonth() - 1)
-      this.createCalendar()
-      // Update currentMonth
-      this.currentMonth = this.selectedDate.toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long'
-      })
-    },
-    nextMonth() {
-      // Move to the next month and recreate the calendar
-      this.selectedDate.setMonth(this.selectedDate.getMonth() + 1)
-      this.createCalendar()
-      // Update currentMonth
-      this.currentMonth = this.selectedDate.toLocaleString('en-US', {
-        year: 'numeric',
-        month: 'long'
-      })
-    },
-    createCalendar() {
-      const year = this.selectedDate.getFullYear()
-      const month = this.selectedDate.getMonth()
-      const lastDay = new Date(year, month + 1, 0)
-      const daysInMonth = lastDay.getDate()
+  }
+)
 
-      // Adjust to the local timezone
-      const firstDay = new Date(Date.UTC(year, month, 1))
+onMounted(() => {
+  createCalendar()
+  currentMonth.value = selectedDate.value.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long'
+  })
+})
 
-      const startOffset = firstDay.getUTCDay()
+const selectDate = (date: Date) => {
+  selectedDate.value = date
+  emit('select', date.toISOString().split('T')[0])
+}
 
-      this.calendar = []
-      let week: Date[] = []
+const isDateSelected = (date: Date) => {
+  return date.toISOString().split('T')[0] === props.currentDate
+}
 
-      for (let day = 1 - startOffset; day <= daysInMonth; day++) {
-        // Adjusted this line to account for the local timezone
-        const currentDate = new Date(Date.UTC(year, month, day))
-        week.push(currentDate)
-        if (week.length === 7) {
-          this.calendar.push(week)
-          week = []
-        }
-      }
+const prevMonth = () => {
+  selectedDate.value.setMonth(selectedDate.value.getMonth() - 1)
+  createCalendar()
+  currentMonth.value = selectedDate.value.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long'
+  })
+}
 
-      if (week.length > 0) {
-        this.calendar.push(week)
-      }
+const nextMonth = () => {
+  selectedDate.value.setMonth(selectedDate.value.getMonth() + 1)
+  createCalendar()
+  currentMonth.value = selectedDate.value.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'long'
+  })
+}
+
+const createCalendar = () => {
+  const year = selectedDate.value.getFullYear()
+  const month = selectedDate.value.getMonth()
+  const lastDay = new Date(year, month + 1, 0)
+  const daysInMonth = lastDay.getDate()
+  const firstDay = new Date(year, month, 1)
+  const startOffset = firstDay.getDay()
+
+  calendar.value = []
+  let week: Date[] = []
+
+  for (let day = 1 - startOffset; day <= daysInMonth; day++) {
+    const currentDate = new Date(Date.UTC(year, month, day))
+    week.push(currentDate)
+    if (week.length === 7) {
+      calendar.value.push(week)
+      week = []
     }
+  }
+
+  if (week.length > 0) {
+    calendar.value.push(week)
   }
 }
 </script>

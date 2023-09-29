@@ -19,14 +19,33 @@
           <div class="bar"></div>
         </div>
         <div class="mobile-menu-content" v-if="showMobileMenu">
-          <router-link to="/">Games</router-link>
-          <router-link to="/standings">Standings</router-link>
-          <router-link to="/stats">Stats</router-link>
+          <router-link @click="toggleMobileMenu" to="/">Games</router-link>
+          <router-link @click="toggleMobileMenu" to="/standings">Standings</router-link>
+          <router-link @click="toggleMobileMenu" to="/stats">Stats</router-link>
         </div>
       </nav>
     </div>
   </header>
 </template>
+
+<!-- COMPOSITION API-->
+<script setup lang="ts">
+import { ref } from 'vue'
+
+const showMobileMenu = ref(false)
+
+const toggleMobileMenu = () => {
+  showMobileMenu.value = !showMobileMenu.value
+
+  if (showMobileMenu.value) {
+    document.body.classList.add('mobile-menu-open')
+  } else {
+    document.body.classList.remove('mobile-menu-open')
+  }
+}
+</script>
+
+<!-- OPTIONS API EXAMPLE
 
 <script lang="ts">
 export default {
@@ -47,7 +66,7 @@ export default {
     }
   }
 }
-</script>
+</script> -->
 
 <style>
 header {

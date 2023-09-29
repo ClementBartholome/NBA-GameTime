@@ -1,7 +1,7 @@
 <template>
-  <!-- DatePicker -->
   <div class="date-picker">
     <button @click="$emit('prevWeek')">&lt;</button>
+    <!-- Render the days of the selected week -->
     <div
       class="day-button"
       v-for="day in selectedWeek"
@@ -15,22 +15,20 @@
   </div>
 </template>
 
-<script lang="ts">
-export default {
-  props: {
-    selectedWeek: Array as () => string[],
-    formattedDate: String
-  },
-  methods: {
-    isDateSelected(day: string) {
-      return day === this.formattedDate
-    },
-    selectDay(day: string) {
-      // console.log(day)
-      this.$emit('selectDay', day)
-    }
-  }
-}
+<script setup lang="ts">
+// Define an emit function to emit custom events to the parent component
+const emit = defineEmits(['selectDay', 'prevWeek', 'nextWeek'])
+
+const props = defineProps({
+  formattedDate: String,
+  selectedWeek: Array as () => string[]
+})
+
+// Check if the day is selected. If it is, add the 'selected' class
+const isDateSelected = (day: string) => day === props.formattedDate
+
+// Select a specific day and emit the 'selectDay' event to the parent (NbaCalendar.vue)
+const selectDay = (day: string) => emit('selectDay', day)
 </script>
 
 <style scoped>

@@ -9,7 +9,7 @@
         type="text"
         id="calendar-input"
         v-model="currentDate"
-        @change="updateGames()"
+        @change="updateGames"
         readonly
         style="display: none"
       />
@@ -21,166 +21,144 @@
     </div>
 
     <date-picker
+      :formatted-date="formattedDate"
       :selectedWeek="selectedWeek"
-      :formattedDate="formattedDate"
       @selectDay="selectDay"
       @prevWeek="prevWeek"
       @nextWeek="nextWeek"
     />
-
     <ul class="game-list">
-      <li v-if="games.length === 0">No games on this date</li>
-      <li v-for="game in games" :key="game.gameID">
+      <span v-if="loading" class="loader"></span>
+      <li v-else-if="games.length === 0">No games on this date</li>
+      <li v-else v-for="game in games" :key="game.gameID">
         <GameCard :game="game" :gamesBoxScores="gamesBoxScores" />
       </li>
     </ul>
   </section>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
+import { ref, onMounted, watch, computed } from 'vue'
 import { fetchAndSaveGames, getGamesFromDb, getBoxScores } from '../util/NbaApi'
 import { useGamesStore } from '../stores/GamesStore'
 
-export default {
-  components: {
-    DatePicker,
-    CalendarPicker,
-    GameCard
-  },
-  data() {
-    return {
-      games: [] as any[], // Data for the NBA games.
-      currentDate: '2023-05-09', // Base date
-      selectedWeek: [] as string[], // The days of the week that is selected.
-      showCalendar: false // Boolean to show or hide the calendar.
-    }
-  },
-  watch: {
-    // Watch for changes in currentDate and trigger updates
-    currentDate(newDate, oldDate) {
-      if (newDate !== oldDate) {
-        this.updateGames()
-        this.updateGamesBoxScores(newDate)
-      }
-    }
-  },
-  computed: {
-    gamesBoxScores() {
-      return useGamesStore().gamesBoxScores
-    },
-    // Format the date to be displayed in the calendar
-    formattedDate() {
-      const dateObj = new Date(this.currentDate)
-      const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
-      const dayOfMonth = dateObj.getDate()
-      return `${dayOfWeek} ${dayOfMonth}`
-    },
-    currentMonth() {
-      const dateObj = new Date(this.currentDate)
-      return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
-    }
-  },
-  mounted() {
-    // Initial setup when the component is mounted
-    this.updateGames()
-    this.updateSelectedWeek()
-    this.updateGamesBoxScores(this.currentDate)
-  },
-  methods: {
-    async updateGames() {
-      try {
-        // Fetch NBA games for the current date
-        await fetchAndSaveGames(this.currentDate)
-        const games = await getGamesFromDb(this.currentDate)
-        this.games = games
-        // console.log(this.games)
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour des matchs :', error)
-      }
-    },
-    async updateGamesBoxScores(date: string) {
-      // Fetch NBA games box scores for the given date
-      const gamesBoxScores = await getBoxScores(date)
-      // Update the store with the fetched data
-      useGamesStore().setGamesBoxScores(gamesBoxScores)
-    },
-    updateSelectedWeek() {
-      // Update the selected week's days based on the current date
-      const selectedDate = new Date(this.currentDate) // Get the current date as a JavaScript Date object
-      const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] // Abbreviated day names
+const games = ref([] as any[]) // Date for the games
+const currentDate = ref('2023-05-09') // Base date
+const selectedWeek = ref([] as string[]) // Days of the week that is selected
+const showCalendar = ref(false) // Show the calendar or not
+const loading = ref(false) // Loading state
 
-      this.selectedWeek = [] // Initialize an empty array to store the days of the selected week
+// Format the date to display it in the date picker
+const formattedDate = computed(() => {
+  const dateObj = new Date(currentDate.value)
+  const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
+  const dayOfMonth = dateObj.getDate()
+  return `${dayOfWeek} ${dayOfMonth}` // = Mon 9, for example
+})
 
-      // Get the day of the week for the current date (0 = Sunday, 1 = Monday, etc.)
-      const dayOfWeek = selectedDate.getDay()
+// Format the date to display it next to the calendar picker
+const currentMonth = computed(() => {
+  const dateObj = new Date(currentDate.value)
+  return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+})
 
-      // Calculate the date for the first day of the week (Sunday) using the current date
-      const sundayDate = new Date(selectedDate)
-      sundayDate.setDate(selectedDate.getDate() - dayOfWeek)
+const gamesBoxScores = computed(() => {
+  return useGamesStore().gamesBoxScores
+})
 
-      // Fill selectedWeek with the days of the week
-      for (let i = 0; i < 7; i++) {
-        const day = new Date(sundayDate)
-        day.setDate(sundayDate.getDate() + i)
-        // Returns a string like "Mon 1", "Tue 2", etc.
-        const formattedDay = daysOfWeek[day.getDay()] + ' ' + day.getDate()
-        this.selectedWeek.push(formattedDay) // Add the formatted day to the selectedWeek array
-        // console.log(this.selectedWeek)
-      }
-    },
-    selectDate(selectedDate: any) {
-      // Close the calendar and update currentDate
-      this.showCalendar = false
-      this.currentDate = selectedDate
-      // Fetch NBA games for the new date
-      this.updateGames()
-      this.updateSelectedWeek()
-    },
-    toggleCalendar() {
-      console.log(this.currentDate)
-      console.log(this.games)
-      // Toggle the calendar visibility
-      this.showCalendar = !this.showCalendar
-    },
-    selectDay(day: string) {
-      // Extract the day number from the selected day string
-      const dayParts = day.split(' ')
-      const dayNumber = parseInt(dayParts[1], 10)
+// On component mount, fetch the games, update the selected week and the games box scores
+onMounted(() => {
+  updateGames()
+  updateSelectedWeek()
+  updateGamesBoxScores(currentDate.value)
+})
 
-      // Create a new date with the selected day
-      const selectedDate = new Date(this.currentDate)
-      selectedDate.setDate(dayNumber)
-
-      // Update currentDate with the selected date
-      this.currentDate = selectedDate.toISOString().split('T')[0]
-
-      // // Fetch NBA games for the new date
-      // this.updateGames()
-    },
-    prevWeek() {
-      // Go back one week by subtracting 7 days from currentDate
-      const prevDate = new Date(this.currentDate)
-      prevDate.setDate(prevDate.getDate() - 7)
-      this.currentDate = prevDate.toISOString().split('T')[0]
-
-      // // Fetch NBA games for the new week and update selectedWeek
-      // this.updateGames()
-      this.updateSelectedWeek()
-    },
-    nextWeek() {
-      // Advance one week by adding 7 days to currentDate
-      const nextDate = new Date(this.currentDate)
-      nextDate.setDate(nextDate.getDate() + 7)
-      this.currentDate = nextDate.toISOString().split('T')[0]
-
-      // // Fetch NBA games for the new week and update selectedWeek
-      // this.updateGames()
-      this.updateSelectedWeek()
-    }
+// Watch for changes in the current date and update the games
+watch(currentDate, (newDate, oldDate) => {
+  if (newDate !== oldDate) {
+    updateGames()
+    updateGamesBoxScores(newDate)
   }
+})
+
+const updateGames = async () => {
+  try {
+    loading.value = true
+    await new Promise((resolve) => setTimeout(resolve, 1000))
+    // Fetch games for the current date and save them in the database
+    await fetchAndSaveGames(currentDate.value)
+    const fetchedGames = await getGamesFromDb(currentDate.value)
+    games.value = fetchedGames
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour des matchs :', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+// Fetch NBA games box scores for the given date and store them
+const updateGamesBoxScores = async (date: string) => {
+  const fetchedGamesBoxScores = await getBoxScores(date)
+  useGamesStore().setGamesBoxScores(fetchedGamesBoxScores)
+}
+
+// Update the selected week based on the current date
+const updateSelectedWeek = () => {
+  const selectedDate = new Date(currentDate.value)
+  const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+  selectedWeek.value = []
+
+  const dayOfWeek = selectedDate.getDay()
+  const sundayDate = new Date(selectedDate)
+  sundayDate.setDate(selectedDate.getDate() - dayOfWeek)
+
+  for (let i = 0; i < 7; i++) {
+    const day = new Date(sundayDate)
+    day.setDate(sundayDate.getDate() + i)
+    const formattedDay = daysOfWeek[day.getDay()] + ' ' + day.getDate()
+    selectedWeek.value.push(formattedDay)
+  }
+}
+
+// Select a date in the calendar picker
+const selectDate = (selectedDate: any) => {
+  showCalendar.value = false
+  currentDate.value = selectedDate
+  updateGames()
+  updateSelectedWeek()
+}
+
+const toggleCalendar = () => {
+  showCalendar.value = !showCalendar.value
+}
+
+// Select a day in the date picker
+const selectDay = (day: string) => {
+  const dayParts = day.split(' ')
+  const dayNumber = parseInt(dayParts[1], 10)
+  const selectedDate = new Date(currentDate.value)
+  selectedDate.setDate(dayNumber)
+  currentDate.value = selectedDate.toISOString().split('T')[0]
+}
+
+// Change the current date to the previous week
+const prevWeek = () => {
+  const prevDate = new Date(currentDate.value)
+  prevDate.setDate(prevDate.getDate() - 7)
+  currentDate.value = prevDate.toISOString().split('T')[0]
+  updateSelectedWeek()
+}
+
+// Change the current date to the next week
+const nextWeek = () => {
+  const nextDate = new Date(currentDate.value)
+  nextDate.setDate(nextDate.getDate() + 7)
+  currentDate.value = nextDate.toISOString().split('T')[0]
+  updateSelectedWeek()
 }
 </script>
 
@@ -262,6 +240,25 @@ section.calendar {
 @media (max-width: 860px) {
   .game-list li {
     max-width: 600px;
+  }
+}
+
+/* Loader */
+
+.loader {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #db5b34;
+  position: relative;
+  animation: bouncy-loader 0.6s infinite alternate;
+}
+@keyframes bouncy-loader {
+  0% {
+    top: 0;
+  }
+  100% {
+    top: 20px;
   }
 }
 </style>

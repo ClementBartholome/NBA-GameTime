@@ -25,94 +25,83 @@
   </router-link>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { fetchAndSaveTeamInfo } from '../util/NbaApi'
 import { getSingleBoxScore } from '../util/NbaUtil'
 import { useTeamStore } from '../stores/TeamsStore'
 
-export default {
-  props: {
-    game: Object,
-    gamesBoxScores: Array
-  },
-  setup(props) {
-    const homeTeamName = ref('')
-    const visitorTeamName = ref('')
-    const homeTeamLogo = ref('')
-    const visitorTeamLogo = ref('')
-    const homeTeamColor = ref('')
-    const visitorTeamColor = ref('')
+const props = defineProps({
+  game: Object,
+  gamesBoxScores: Array
+})
 
-    const gameID = ref(0)
+const homeTeamName = ref('')
+const visitorTeamName = ref('')
+const homeTeamLogo = ref('')
+const visitorTeamLogo = ref('')
+const homeTeamColor = ref('')
+const visitorTeamColor = ref('')
+const gameID = ref(0)
 
-    const teamStore = useTeamStore()
+const teamStore = useTeamStore()
 
-    onMounted(async () => {
-      // console.log(props.game)
-      // Check if game data and gamesBoxScores are available and not empty
-      if (props.game && props.gamesBoxScores && props.gamesBoxScores.length > 0) {
-        // Fetch home team information
-        const homeTeamInfo = await fetchAndSaveTeamInfo(props.game.home_team_name)
-        // Fetch visitor team information
-        const visitorTeamInfo = await fetchAndSaveTeamInfo(props.game.visitor_team_name)
+onMounted(async () => {
+  if (props.game && props.gamesBoxScores && props.gamesBoxScores.length > 0) {
+    // Fetch home team information
+    const homeTeamInfo = await fetchAndSaveTeamInfo(props.game.home_team_name)
+    // Fetch visitor team information
+    const visitorTeamInfo = await fetchAndSaveTeamInfo(props.game.visitor_team_name)
 
-        // Set home team properties in the store
-        teamStore.setHomeTeamInfo(homeTeamInfo)
-        // Set visitor team properties in the store
-        teamStore.setVisitorTeamInfo(visitorTeamInfo)
+    // Set home team properties
+    homeTeamName.value = homeTeamInfo.teamKey
+    homeTeamLogo.value = homeTeamInfo.logo
+    homeTeamColor.value = '#' + homeTeamInfo.primaryColor
 
-        // Set home team properties
-        homeTeamName.value = homeTeamInfo.teamKey
-        homeTeamLogo.value = homeTeamInfo.logo
-        homeTeamColor.value = '#' + homeTeamInfo.primaryColor
+    // Set visitor team properties
+    visitorTeamName.value = visitorTeamInfo.teamKey
+    visitorTeamLogo.value = visitorTeamInfo.logo
+    visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
 
-        // Set visitor team properties
-        visitorTeamName.value = visitorTeamInfo.teamKey
-        visitorTeamLogo.value = visitorTeamInfo.logo
-        visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
+    // Get the single box score for the specified teams
+    const boxScore = getSingleBoxScore(
+      props.gamesBoxScores,
+      homeTeamName.value,
+      visitorTeamName.value
+    )
 
-        // console.log(homeTeamName.value)
-        // console.log(props.gamesBoxScores)
-
-        // Get the single box score for the specified teams
-        const boxScore = getSingleBoxScore(
-          props.gamesBoxScores,
-          homeTeamName.value,
-          visitorTeamName.value
-        )
-
-        // Check if boxScore data is structured correctly
-        if (boxScore && boxScore[0] && boxScore[0].Game && boxScore[0].Game.GameID) {
-          gameID.value = boxScore[0].Game.GameID
-          console.log(boxScore[0])
-          console.log(gameID.value)
-        } else {
-          console.error('La structure des données de boxScore[0] est incorrecte.')
-        }
-      }
-    })
-
-    return {
-      homeTeamLogo,
-      visitorTeamLogo,
-      homeTeamColor,
-      visitorTeamColor,
-      homeTeamName,
-      visitorTeamName,
-      gameID
+    // Check if boxScore data is structured correctly
+    if (boxScore[0].Game.GameID) {
+      gameID.value = boxScore[0].Game.GameID
+      console.log(boxScore[0])
+    } else {
+      console.error('La structure des données de boxScore[0] est incorrecte.')
     }
-  },
-  methods: {
-    // Determine if the home team is the winner
-    isHomeWinner(homeScore: number, awayScore: number) {
-      return homeScore > awayScore
-    },
-    // Determine if the away team is the winner
-    isAwayWinner(homeScore: number, awayScore: number) {
-      return awayScore > homeScore
+
+    const existingTeamInfo = teamStore.teamsInfo.find((info) => info.gameId === gameID.value)
+
+    // If it doesn't exist, add it to the store
+    if (!existingTeamInfo) {
+      const teamInfo = {
+        gameId: gameID.value,
+        homeTeamInfo,
+        visitorTeamInfo
+      }
+
+      // Add team information to the store
+      teamStore.addTeamInfo(teamInfo)
+      console.log(teamStore.teamsInfo)
     }
   }
+})
+
+// Determine if the home team is the winner
+const isHomeWinner = (homeScore: number, awayScore: number) => {
+  return homeScore > awayScore
+}
+// Determine if the away team is the winner
+const isAwayWinner = (homeScore: number, awayScore: number) => {
+  return awayScore > homeScore
 }
 </script>
 

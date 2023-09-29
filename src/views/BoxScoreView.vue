@@ -6,6 +6,7 @@
       :playerStats="playerStats"
       :homeTeamName="homeTeamName"
       :visitorTeamName="visitorTeamName"
+      :gameId="gameId"
     />
   </main>
 </template>
