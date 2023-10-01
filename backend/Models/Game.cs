@@ -11,7 +11,6 @@ public class Game
     public string gameDate { get; set; }
 
     public Game() {
-        id = 0;
         gameID = 0;
         home_team_name = "";
         home_team_full_name = "";
