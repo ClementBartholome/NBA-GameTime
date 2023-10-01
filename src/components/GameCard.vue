@@ -27,8 +27,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { fetchAndSaveTeamInfo } from '../util/NbaApi'
-import { getSingleBoxScore } from '../util/NbaUtil'
+import { fetchAndSaveTeamInfo, getCorrectBoxScore } from '../util/NbaApi'
 import { useTeamStore } from '../stores/TeamsStore'
 
 const props = defineProps({
@@ -63,20 +62,26 @@ onMounted(async () => {
     visitorTeamLogo.value = visitorTeamInfo.logo
     visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
 
+    const correctBoxScore = await getCorrectBoxScore(props.game.gameID)
+    // console.log(correctBoxScore)
+
+    gameID.value = correctBoxScore[0].game.id
+    // console.log(gameID.value)
+
     // Get the single box score for the specified teams
-    const boxScore = getSingleBoxScore(
-      props.gamesBoxScores,
-      homeTeamName.value,
-      visitorTeamName.value
-    )
+    // const boxScore = getSingleBoxScore(
+    //   props.gamesBoxScores,
+    //   homeTeamName.value,
+    //   visitorTeamName.value
+    // )
 
     // Check if boxScore data is structured correctly
-    if (boxScore[0].Game.GameID) {
-      gameID.value = boxScore[0].Game.GameID
-      console.log(boxScore[0])
-    } else {
-      console.error('La structure des données de boxScore[0] est incorrecte.')
-    }
+    // if (boxScore[0].Game.GameID) {
+    //   gameID.value = boxScore[0].Game.GameID
+    //   console.log(boxScore[0])
+    // } else {
+    //   console.error('La structure des données de boxScore[0] est incorrecte.')
+    // }
 
     const existingTeamInfo = teamStore.teamsInfo.find((info) => info.gameId === gameID.value)
 
@@ -90,7 +95,7 @@ onMounted(async () => {
 
       // Add team information to the store
       teamStore.addTeamInfo(teamInfo)
-      console.log(teamStore.teamsInfo)
+      // console.log(teamStore.teamsInfo)
     }
   }
 })

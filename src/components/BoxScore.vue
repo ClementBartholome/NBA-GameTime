@@ -4,6 +4,7 @@
       <div class="team-header">
         <img :src="homeTeamInfo.logo" alt="Team Logo" />
         <h2>{{ homeTeamInfo.teamName }}</h2>
+        <span>{{ homeTeamScore }}</span>
       </div>
       <div class="table-container">
         <table>
@@ -17,7 +18,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr
+            <tr v-for="(player, index) in homeTeam" :key="index">
+              <td>{{ player.player.first_name }} {{ player.player.last_name }}</td>
+              <td v-if="player.min != 0">{{ player.pts }}</td>
+              <td v-if="player.min != 0">{{ player.reb }}</td>
+              <td v-if="player.min != 0">{{ player.ast }}</td>
+              <td v-if="player.min != 0">{{ player.min }}</td>
+              <td v-else colspan="4">DNP</td>
+            </tr>
+            <!-- <tr
               v-for="(player, index) in sortedHomeTeamPlayers"
               :key="index"
               :class="{ starter: player.Started, bench: !player.Started }"
@@ -28,13 +37,14 @@
               <td v-if="player.Minutes !== 0">{{ player.Assists }}</td>
               <td v-if="player.Minutes !== 0">{{ player.Minutes }}</td>
               <td v-else colspan="4">DNP</td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
     </div>
     <div class="team">
       <div class="team-header">
+        <span>{{ awayTeamScore }}</span>
         <h2>{{ visitorTeamInfo.teamName }}</h2>
         <img :src="visitorTeamInfo.logo" alt="Team logo" />
       </div>
@@ -50,7 +60,15 @@
             </tr>
           </thead>
           <tbody>
-            <tr
+            <tr v-for="(player, index) in awayTeam" :key="index">
+              <td>{{ player.player.first_name }} {{ player.player.last_name }}</td>
+              <td v-if="player.min != 0">{{ player.pts }}</td>
+              <td v-if="player.min != 0">{{ player.reb }}</td>
+              <td v-if="player.min != 0">{{ player.ast }}</td>
+              <td v-if="player.min != 0">{{ player.min }}</td>
+              <td v-else colspan="4">DNP</td>
+            </tr>
+            <!-- <tr
               v-for="(player, index) in sortedVisitorTeamPlayers"
               :key="index"
               :class="{ starter: player.Started, bench: !player.Started }"
@@ -61,7 +79,7 @@
               <td v-if="player.Minutes !== 0">{{ player.Assists }}</td>
               <td v-if="player.Minutes !== 0">{{ player.Minutes }}</td>
               <td v-else colspan="4">DNP</td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -71,43 +89,119 @@
 
 <script setup lang="ts">
 import { useTeamStore } from '../stores/TeamsStore'
-import { computed, defineProps } from 'vue'
+import { getCorrectBoxScore } from '../util/NbaApi'
+import { computed, defineProps, ref, onMounted } from 'vue'
 
-interface PlayerStats {
-  Name: string
-  Minutes: number
-  Points: number
-  Rebounds: number
-  Assists: number
-  HomeOrAway: string
-  Started: number
+// interface PlayerStats {
+//   Name: string
+//   Minutes: number
+//   Points: number
+//   Rebounds: number
+//   Assists: number
+//   HomeOrAway: string
+//   Started: number
+// }
+
+interface BoxScore {
+  player: {
+    first_name: string
+    last_name: string
+  }
+  game: {
+    home_team_score: number
+    visitor_team_score: number
+  }
+  pts: number
+  reb: number
+  ast: number
+  min: string
+  team: {
+    abbreviation: string
+  }
 }
 
 const props = defineProps({
-  playerStats: Array<PlayerStats>,
-  gameId: String
+  gameId: String,
+  homeTeamName: String,
+  visitorTeamName: String
 })
 
-const homeTeamPlayers = computed(() =>
-  props.playerStats ? props.playerStats.filter((player) => player.HomeOrAway === 'HOME') : []
-)
+const boxScore = ref<BoxScore[]>([])
+const homeTeam = ref<BoxScore[]>([])
+const awayTeam = ref<BoxScore[]>([])
+const homeTeamScore = ref(0)
+const awayTeamScore = ref(0)
 
-const visitorTeamPlayers = computed(() =>
-  props.playerStats ? props.playerStats.filter((player) => player.HomeOrAway === 'AWAY') : []
-)
+onMounted(async () => {
+  await fetchBoxScore()
+})
 
-const sortPlayersByStarted = (players: PlayerStats[]) => {
-  // Sort players by Started (0 or 1), then by Minutes
-  return players.slice().sort((a, b) => {
-    if (a.Started === b.Started) {
-      return b.Minutes - a.Minutes
-    }
-    return b.Started - a.Started
+const fetchBoxScore = async () => {
+  const boxScoreData = await getCorrectBoxScore(props.gameId)
+  boxScore.value = boxScoreData
+
+  // Filter players for the home team
+  homeTeam.value = boxScore.value.filter(
+    (player) => player.team.abbreviation === convertTeamName(props.homeTeamName)
+  )
+  awayTeam.value = boxScore.value.filter(
+    (player) => player.team.abbreviation === convertTeamName(props.visitorTeamName)
+  )
+
+  homeTeamScore.value = homeTeam.value[0].game.home_team_score
+  awayTeamScore.value = awayTeam.value[0].game.visitor_team_score
+
+  // Sort players by minutes played
+  homeTeam.value.sort((a, b) => b.min - a.min)
+  awayTeam.value.sort((a, b) => b.min - a.min)
+
+  homeTeam.value.forEach((player) => {
+    player.min = player.min < 10 ? player.min.slice(1) : player.min
+  })
+
+  awayTeam.value.forEach((player) => {
+    player.min = player.min < 10 ? player.min.slice(1) : player.min
   })
 }
 
-const sortedHomeTeamPlayers = computed(() => sortPlayersByStarted(homeTeamPlayers.value))
-const sortedVisitorTeamPlayers = computed(() => sortPlayersByStarted(visitorTeamPlayers.value))
+// Convert team abbreviations to match the ones used in the box score
+const convertTeamName = (teamName: any) => {
+  switch (teamName) {
+    case 'PHO':
+      return 'PHX'
+    case 'NY':
+      return 'NYK'
+    case 'GS':
+      return 'GSW'
+    case 'NO':
+      return 'NOP'
+    case 'SA':
+      return 'SAS'
+    default:
+      return teamName
+  }
+}
+
+// const homeTeamPlayers = computed(() =>
+//   props.playerStats ? props.playerStats.filter((player) => player.HomeOrAway === 'HOME') : []
+// )
+
+// const visitorTeamPlayers = computed(() =>
+//   props.playerStats ? props.playerStats.filter((player) => player.HomeOrAway === 'AWAY') : []
+// )
+
+// const sortPlayersByStarted = (players: PlayerStats[]) => {
+//   // Sort players by Started (0 or 1), then by Minutes
+//   return players.slice().sort((a, b) => {
+//     if (a.Started === b.Started) {
+//       return b.Minutes - a.Minutes
+//     }
+//     return b.Started - a.Started
+//   })
+// }
+
+// const sortedHomeTeamPlayers = computed(() => sortPlayersByStarted(homeTeamPlayers.value))
+// const sortedVisitorTeamPlayers = computed(() => sortPlayersByStarted(visitorTeamPlayers.value))
 
 const teamStore = useTeamStore()
 
@@ -160,7 +254,11 @@ const visitorTeamInfo = computed(() => {
   height: 40px;
 }
 .team h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
+}
+
+.team span {
+  font-size: 1.2rem;
 }
 
 /* Table Styling */

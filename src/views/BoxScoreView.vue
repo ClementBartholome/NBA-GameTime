@@ -4,9 +4,9 @@
     <!-- <h1>Box Score for the game {{ gameId }}</h1> -->
     <BoxScore
       :playerStats="playerStats"
+      :gameId="gameId"
       :homeTeamName="homeTeamName"
       :visitorTeamName="visitorTeamName"
-      :gameId="gameId"
     />
   </main>
 </template>
