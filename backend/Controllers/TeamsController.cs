@@ -18,14 +18,14 @@ namespace backend.Controllers
             _dbContext = dbContext;
         }
 
-        [HttpGet("{teamName}")]
-        public async Task<ActionResult<Team>> GetTeamInfo(string teamName)
+        [HttpGet("{TeamName}")]
+        public async Task<ActionResult<Team>> GetTeamInfo(string TeamName)
         {
             try
             {
-                // Try to find the team info in the database by teamName
+                // Try to find the team info in the database by TeamName
                 var team = await _dbContext.Teams
-                    .FirstOrDefaultAsync(t => t.teamName == teamName);
+                    .FirstOrDefaultAsync(t => t.TeamName == TeamName);
 
                 if (team != null)
                 {
@@ -49,7 +49,7 @@ namespace backend.Controllers
             {
                 // Check if team info already exists in the database
                 var existingTeam = await _dbContext.Teams
-                    .FirstOrDefaultAsync(t => t.teamName == team.teamName);
+                    .FirstOrDefaultAsync(t => t.TeamName == team.TeamName);
 
                 if (existingTeam != null)
                 {

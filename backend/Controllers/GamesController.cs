@@ -20,13 +20,13 @@ namespace backend.Controllers
 
         [HttpGet]
         [Route("byDate")]
-        public async Task<ActionResult<IEnumerable<Game>>> GetGamesByDate([FromQuery] string gameDate)
+        public async Task<ActionResult<IEnumerable<Game>>> GetGamesByDate([FromQuery] string GameDate)
         {
             try
             {
                 // Get games for the specified date from the database
                 var games = await _dbContext.Games
-                    .Where(game => game.gameDate == gameDate)
+                    .Where(game => game.GameDate == GameDate)
                     .ToListAsync();
 
                 return Ok(games);
@@ -45,7 +45,7 @@ namespace backend.Controllers
             {
                 // Check if games for this date already exist in database
                 bool gamesExist = await _dbContext.Games
-                    .AnyAsync(game => game.gameDate == games.First().gameDate);
+                    .AnyAsync(game => game.GameDate == games.First().GameDate);
 
                 if (gamesExist)
                 {

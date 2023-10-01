@@ -1,23 +1,28 @@
+using System;
+using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations.Schema; 
+
 public class Game
 {
-    public int id { get; set; }
-    public int gameID { get; set;}
-    public string home_team_name { get; set; }
-    public string home_team_full_name { get; set; }
-    public string visitor_team_name { get; set; }
-    public string visitor_team_full_name { get; set; }
-    public int home_team_score { get; set; }
-    public int visitor_team_score { get; set; }
-    public string gameDate { get; set; }
+    public int Id { get; set; }
+    public int GameId { get; set;}
+    public string HomeTeamName { get; set; }
+    public string HomeTeamFullName { get; set; }
+    public string VisitorTeamName { get; set; }
+    public string VisitorTeamFullName { get; set; }
+    public int HomeTeamScore { get; set; }
+    public int VisitorTeamScore { get; set; }
+    public string GameDate { get; set; }
 
     public Game() {
-        gameID = 0;
-        home_team_name = "";
-        home_team_full_name = "";
-        visitor_team_name = "";
-        visitor_team_full_name = "";
-        home_team_score = 0;
-        visitor_team_score = 0;
-        gameDate = "";
+        GameId = 0;
+        HomeTeamName = "";
+        HomeTeamFullName = "";
+        VisitorTeamName = "";
+        VisitorTeamFullName = "";
+        HomeTeamScore = 0;
+        VisitorTeamScore = 0;
+        GameDate = "";
     }
 }
+

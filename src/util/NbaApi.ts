@@ -23,20 +23,21 @@ export async function fetchAndSaveGames(currentDate: string) {
     }
   })
 
-  const games = response.data.data as any[]
+  const fetchedGames = response.data.data as any[]
+  console.log(fetchedGames)
 
-  if (games === undefined || games.length === 0) {
+  if (fetchedGames === undefined || fetchedGames.length === 0) {
     return []
   }
 
-  const transformedGamesData = games.map((game) => ({
-    gameID: game.id,
-    home_team_name: game.home_team.name,
-    home_team_full_name: game.home_team.full_name,
-    visitor_team_name: game.visitor_team.name,
-    visitor_team_full_name: game.visitor_team.full_name,
-    home_team_score: game.home_team_score,
-    visitor_team_score: game.visitor_team_score,
+  const transformedGamesData = fetchedGames.map((game) => ({
+    gameId: game.id,
+    homeTeamName: game.home_team.name,
+    homeTeamFullName: game.home_team.full_name,
+    visitorTeamName: game.visitor_team.name,
+    visitorTeamFullName: game.visitor_team.full_name,
+    homeTeamScore: game.home_team_score,
+    visitorTeamScore: game.visitor_team_score,
     gameDate: currentDate
   }))
 
@@ -85,16 +86,16 @@ export async function fetchAndSaveTeamInfo(teamName: string) {
     )
 
     if (Array.isArray(response.data) && response.data.length > 0) {
-      const team = response.data.find((t: any) => t.Name === teamName)
+      const fetchedTeam = response.data.find((t: any) => t.Name === teamName)
       console.log(teamName)
-      console.log(team)
+      console.log(fetchedTeam)
 
-      if (team) {
+      if (fetchedTeam) {
         const teamInfo = {
-          logo: team.WikipediaLogoUrl,
-          primaryColor: team.PrimaryColor,
-          teamKey: team.Key,
-          teamName: team.Name
+          logo: fetchedTeam.WikipediaLogoUrl,
+          primaryColor: fetchedTeam.PrimaryColor,
+          teamKey: fetchedTeam.Key,
+          teamName: fetchedTeam.Name
         }
 
         // Send the data to the backend
@@ -169,7 +170,6 @@ export async function getStandings(season: number) {
         LastTenLosses: team.LastTenLosses,
         Streak: team.Streak
       }))
-      console.log(standings)
 
       // Send the data to the backend
       await axios.post('http://localhost:5068/api/standings', standings, {

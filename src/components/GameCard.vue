@@ -3,22 +3,22 @@
     <div class="game-card" v-if="game">
       <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
         <img :src="homeTeamLogo" alt="Home team logo" />
-        <h2>{{ game.home_team_full_name }}</h2>
+        <h2>{{ game.homeTeamFullName }}</h2>
         <span
           class="score"
-          v-if="game.home_team_score > 0"
-          :class="{ winner: isHomeWinner(game.home_team_score, game.visitor_team_score) }"
-          >{{ game.home_team_score }}</span
+          v-if="game.homeTeamScore > 0"
+          :class="{ winner: isHomeWinner(game.homeTeamScore, game.visitorTeamScore) }"
+          >{{ game.homeTeamScore }}</span
         >
       </div>
       <div class="away-team" :style="{ backgroundColor: visitorTeamColor }">
         <img :src="visitorTeamLogo" alt="Visiting team logo" />
-        <h2>{{ game.visitor_team_full_name }}</h2>
+        <h2>{{ game.visitorTeamFullName }}</h2>
         <span
           class="score"
-          v-if="game.visitor_team_score > 0"
-          :class="{ winner: isAwayWinner(game.home_team_score, game.visitor_team_score) }"
-          >{{ game.visitor_team_score }}</span
+          v-if="game.visitorTeamScore > 0"
+          :class="{ winner: isAwayWinner(game.homeTeamScore, game.visitorTeamScore) }"
+          >{{ game.visitorTeamScore }}</span
         >
       </div>
     </div>
@@ -48,9 +48,9 @@ const teamStore = useTeamStore()
 onMounted(async () => {
   if (props.game && props.gamesBoxScores && props.gamesBoxScores.length > 0) {
     // Fetch home team information
-    const homeTeamInfo = await fetchAndSaveTeamInfo(props.game.home_team_name)
+    const homeTeamInfo = await fetchAndSaveTeamInfo(props.game.homeTeamName)
     // Fetch visitor team information
-    const visitorTeamInfo = await fetchAndSaveTeamInfo(props.game.visitor_team_name)
+    const visitorTeamInfo = await fetchAndSaveTeamInfo(props.game.visitorTeamName)
 
     // Set home team properties
     homeTeamName.value = homeTeamInfo.teamKey
@@ -62,7 +62,7 @@ onMounted(async () => {
     visitorTeamLogo.value = visitorTeamInfo.logo
     visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
 
-    const correctBoxScore = await getCorrectBoxScore(props.game.gameID)
+    const correctBoxScore = await getCorrectBoxScore(props.game.gameId)
     // console.log(correctBoxScore)
 
     gameID.value = correctBoxScore[0].game.id
