@@ -192,9 +192,7 @@ export async function getStandingsFromDb(season: number) {
     const response = await axios.get(
       `http://localhost:5068/api/standings/bySeason?season=${season}`
     )
-
     const standings = response.data as any[]
-    console.log(standings)
     return standings
   } catch (error) {
     console.error('Error fetching NBA standings:', error)

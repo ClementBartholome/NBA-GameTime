@@ -92,7 +92,6 @@ const updateGames = async () => {
     await fetchAndSaveGames(currentDate.value)
     const fetchedGames = await getGamesFromDb(currentDate.value)
     games.value = fetchedGames
-    console.log(games.value)
   } catch (error) {
     console.error('Erreur lors de la mise à jour des matchs :', error)
   } finally {
