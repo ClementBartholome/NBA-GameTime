@@ -258,6 +258,12 @@ section.calendar {
   0% {
     top: 0;
   }
+  33% {
+    top: 20px;
+  }
+  66% {
+    top: 0;
+  }
   100% {
     top: 20px;
   }
