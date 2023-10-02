@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import AppHeader from '../components/AppHeader.vue'
 import { ref, onMounted, computed } from 'vue'
-import { getStandings, getStandingsFromDb, getTeamInfoFromDb } from '../util/NbaApi'
+import { fetchAndSaveStandings, getStandingsFromDb, getTeamInfoFromDb } from '../util/NbaApi'
 
 interface TeamStandings {
   season: number
@@ -73,7 +73,7 @@ const teamLogos = ref<{ [key: string]: string }>({}) // Store team logos with te
 
 // Function to fetch standings for the selected season
 const fetchStandings = async () => {
-  await getStandings(selectedSeason.value)
+  await fetchAndSaveStandings(selectedSeason.value)
   const fetchedStandings = await getStandingsFromDb(selectedSeason.value)
   if (fetchedStandings) {
     standings.value = fetchedStandings

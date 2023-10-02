@@ -20,22 +20,27 @@ namespace backend.Controllers
 
         [HttpGet]
         [Route("byId")]
-        public async Task<ActionResult<IEnumerable<Player>>> GetPlayerById([FromQuery] int PlayerId)
+        public async Task<ActionResult<Player>> GetPlayerById([FromQuery] int PlayerId)
         {
             try
             {
-                // Get player for the specified id from the database
+                // Get a single player for the specified ID from the database
                 var player = await _dbContext.Players
-                    .Where(player => player.PlayerId == PlayerId)
-                    .ToListAsync();
+                    .FirstOrDefaultAsync(player => player.PlayerId == PlayerId);
+
+                if (player == null)
+                {
+                    return NotFound("Joueur non trouvé");
+                }
 
                 return Ok(player);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Erreur interne du serveur : {ex.Message}");
+                return StatusCode(500, $"Erreur interne du serveur: {ex.Message}");
             }
         }
+
 
         [HttpPost]
         public async Task<ActionResult> AddPlayer([FromBody] Player player)

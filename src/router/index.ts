@@ -3,6 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import StandingsView from '../views/StandingsView.vue'
 import StatsView from '../views/StatsView.vue'
 import BoxScoreView from '../views/BoxScoreView.vue'
+import PlayerView from '../views/PlayerView.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -26,6 +27,11 @@ const router = createRouter({
       path: '/boxscore/:gameId-:homeTeamName-:visitorTeamName',
       name: 'BoxScoreView',
       component: BoxScoreView
+    },
+    {
+      path: '/player/:playerId',
+      name: 'PlayerView',
+      component: PlayerView
     }
   ]
 })

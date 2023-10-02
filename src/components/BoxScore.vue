@@ -21,7 +21,9 @@
           </thead>
           <tbody>
             <tr v-for="(player, index) in homeTeam" :key="index">
-              <td>{{ player.player.first_name }} {{ player.player.last_name }}</td>
+              <router-link :to="'/player/' + player.player.id" class="player-link"
+                ><td>{{ player.player.first_name }} {{ player.player.last_name }}</td></router-link
+              >
               <td v-if="player.min != 0">{{ player.pts }}</td>
               <td v-if="player.min != 0">{{ player.reb }}</td>
               <td v-if="player.min != 0">{{ player.ast }}</td>
@@ -65,7 +67,9 @@
           </thead>
           <tbody>
             <tr v-for="(player, index) in awayTeam" :key="index">
-              <td>{{ player.player.first_name }} {{ player.player.last_name }}</td>
+              <router-link :to="'/player/' + player.player.id" class="player-link"
+                ><td>{{ player.player.first_name }} {{ player.player.last_name }}</td></router-link
+              >
               <td v-if="player.min != 0">{{ player.pts }}</td>
               <td v-if="player.min != 0">{{ player.reb }}</td>
               <td v-if="player.min != 0">{{ player.ast }}</td>
@@ -94,7 +98,7 @@
 <script setup lang="ts">
 import { useTeamStore } from '../stores/TeamsStore'
 import { getCorrectBoxScore } from '../util/NbaApi'
-import { computed, defineProps, ref, onMounted } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 
 // interface PlayerStats {
 //   Name: string
@@ -110,6 +114,7 @@ interface BoxScore {
   player: {
     first_name: string
     last_name: string
+    id: number
   }
   game: {
     home_team_score: number
@@ -279,6 +284,11 @@ const visitorTeamInfo = computed(() => {
 
 .team span {
   font-size: 1.2rem;
+}
+
+.player-link {
+  color: black;
+  display: contents;
 }
 
 /* Table Styling */

@@ -144,7 +144,7 @@ export async function getTeamInfoFromDb(teamName: string) {
  **
  */
 
-export async function getStandings(season: number) {
+export async function fetchAndSaveStandings(season: number) {
   const existingStandings = await getStandingsFromDb(season)
 
   if (existingStandings.length > 0) {
@@ -196,7 +196,6 @@ export async function getStandingsFromDb(season: number) {
     return standings
   } catch (error) {
     console.error('Error fetching NBA standings:', error)
-    // Handle the error or return an empty array if needed
     return []
   }
 }
@@ -226,66 +225,54 @@ export async function getCorrectBoxScore(gameID: any) {
     }
   } catch (error) {
     console.error('Error fetching NBA box scores:', error)
-    // Handle the error or return an empty array if needed
     return []
   }
-  /* {
-    "data": [
-        {
-            "id": 12644890,
-            "ast": 0,
-            "blk": 0,
-            "dreb": 3,
-            "fg3_pct": 0.167,
-            "fg3a": 6,
-            "fg3m": 1,
-            "fg_pct": 0.111,
-            "fga": 9,
-            "fgm": 1,
-            "ft_pct": 0.5,
-            "fta": 2,
-            "ftm": 1,
-            "game": {
-                "id": 858114,
-                "date": "2023-01-30T00:00:00.000Z",
-                "home_team_id": 24,
-                "home_team_score": 114,
-                "period": 4,
-                "postseason": false,
-                "season": 2022,
-                "status": "Final",
-                "time": "Final",
-                "visitor_team_id": 28,
-                "visitor_team_score": 106
-            },
-            "min": "26",
-            "oreb": 0,
-            "pf": 1,
-            "player": {
-                "id": 666679,
-                "first_name": "Cameron",
-                "height_feet": null,
-                "height_inches": null,
-                "last_name": "Johnson",
-                "position": "F",
-                "team_id": 3,
-                "weight_pounds": null
-            },
-            "pts": 4,
-            "reb": 3,
-            "stl": 2,
-            "team": {
-                "id": 24,
-                "abbreviation": "PHX",
-                "city": "Phoenix",
-                "conference": "West",
-                "division": "Pacific",
-                "full_name": "Phoenix Suns",
-                "name": "Suns"
-            },
-            "turnover": 0
-        }, 
-  */
+}
+
+/*
+ ** PLAYER DATA
+ **
+ */
+
+export async function fetchAndSavePlayerInfo(playerId: number) {
+  const existingPlayer = await getPlayerInfoFromDb(playerId)
+
+  if (existingPlayer.length > 0) {
+    return existingPlayer
+  }
+  try {
+    const response = await axios.get(`https://www.balldontlie.io/api/v1/players/${playerId}`)
+    const fetchedPlayer = response.data
+    const playerInfo = {
+      playerId: fetchedPlayer.id,
+      firstName: fetchedPlayer.first_name,
+      lastName: fetchedPlayer.last_name,
+      position: fetchedPlayer.position,
+      teamName: fetchedPlayer.team.name
+    }
+    await axios.post('http://localhost:5068/api/players', playerInfo, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return playerInfo
+  } catch (error) {
+    console.error('Error fetching player info:', error)
+  }
+
+  // Return an empty array if no standings data is found or an error occurs
+  return []
+}
+
+export async function getPlayerInfoFromDb(playerId: number) {
+  try {
+    const response = await axios.get(`http://localhost:5068/api/players/byId?playerid=${playerId}`)
+    const player = response.data
+    return player
+  } catch (error) {
+    console.error('Player is not yet added to database:', error)
+    return []
+  }
 }
 
 export async function getBoxScores(currentDate: string) {
