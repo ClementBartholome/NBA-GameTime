@@ -208,7 +208,7 @@ export async function getStandingsFromDb(season: number) {
 export async function fetchAndSavePlayerInfo(playerId: number) {
   const existingPlayer = await getPlayerInfoFromDb(playerId)
 
-  if (existingPlayer.length > 0) {
+  if (existingPlayer.Id) {
     return existingPlayer
   }
   try {
@@ -282,6 +282,65 @@ export async function getPlayerInfoFromDb(playerId: number) {
     return player
   } catch (error) {
     console.error('Player is not yet added to database:', error)
+    return []
+  }
+}
+
+export async function fetchAndSavePlayerSeasonAvg(playerId: number, season: number) {
+  const existingStats = await getPlayerSeasonAvgFromDb(playerId, season)
+  if (existingStats.id) {
+    return existingStats
+  }
+  try {
+    const response = await axios.get(
+      `https://www.balldontlie.io/api/v1/season_averages?player_ids[]=${playerId}&season=${season}`
+    )
+    const fetchedStats = response.data
+    const playerSeasonAvg = {
+      playerId: fetchedStats.data[0].player_id,
+      season: fetchedStats.data[0].season,
+      gamesPlayed: fetchedStats.data[0].games_played,
+      minutes: parseFloat(fetchedStats.data[0].min),
+      points: fetchedStats.data[0].pts,
+      rebounds: fetchedStats.data[0].reb,
+      offensiveRebounds: fetchedStats.data[0].oreb,
+      defensiveRebounds: fetchedStats.data[0].dreb,
+      assists: fetchedStats.data[0].ast,
+      blocks: fetchedStats.data[0].blk,
+      steals: fetchedStats.data[0].stl,
+      turnovers: fetchedStats.data[0].turnover,
+      fieldGoalsAttempted: fetchedStats.data[0].fga,
+      fieldGoalsMade: fetchedStats.data[0].fgm,
+      fieldGoalsPercentage: fetchedStats.data[0].fg_pct,
+      threePointersAttempted: fetchedStats.data[0].fg3a,
+      threePointersMade: fetchedStats.data[0].fg3m,
+      threePointersPercentage: fetchedStats.data[0].fg3_pct,
+      freeThrowsAttempted: fetchedStats.data[0].fta,
+      freeThrowsMade: fetchedStats.data[0].ftm,
+      freeThrowsPercentage: fetchedStats.data[0].ft_pct,
+      fouls: fetchedStats.data[0].pf
+    }
+    await axios.post('http://localhost:5068/api/playerseasonaverages', playerSeasonAvg, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    return playerSeasonAvg
+  } catch (error) {
+    console.error('Player season averages not yet added', error)
+    return []
+  }
+}
+
+export async function getPlayerSeasonAvgFromDb(playerId: number, season: number) {
+  try {
+    const response = await axios.get(
+      `http://localhost:5068/api/playerseasonaverages/byId?playerid=${playerId}&season=${season}`
+    )
+    const stats = response.data
+    return stats
+  } catch (error) {
+    console.error('Error fetching player season averages:', error)
     return []
   }
 }

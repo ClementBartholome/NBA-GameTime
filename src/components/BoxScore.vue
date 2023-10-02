@@ -22,7 +22,9 @@
           <tbody>
             <tr v-for="(player, index) in homeTeam" :key="index">
               <router-link :to="'/player/' + player.player.id" class="player-link"
-                ><td>{{ player.player.first_name }} {{ player.player.last_name }}</td></router-link
+                ><td class="player-name">
+                  {{ player.player.first_name }} {{ player.player.last_name }}
+                </td></router-link
               >
               <td v-if="player.min != 0">{{ player.pts }}</td>
               <td v-if="player.min != 0">{{ player.reb }}</td>
@@ -296,6 +298,10 @@ table td {
 table th {
   background-color: #f0f0f0;
   font-weight: bold;
+}
+
+.player-name:hover {
+  opacity: 0.7;
 }
 
 @media (max-width: 1024px) {

@@ -1,11 +1,7 @@
 <template>
   <AppHeader />
-  <main>
-    <section
-      class="player-profile"
-      v-if="playerInfo"
-      :style="{ backgroundColor: '#' + playerTeamInfo.primaryColor }"
-    >
+  <main v-if="playerInfo && playerStats">
+    <section class="player-profile" :style="{ backgroundColor: '#' + playerTeamInfo.primaryColor }">
       <img :src="playerTeamInfo.logo" class="logo" :alt="playerInfo.teamName + ' logo'" />
       <img
         :src="playerInfo.playerPhoto"
@@ -25,15 +21,15 @@
       <div class="averages">
         <div class="stat">
           <h2>PPG</h2>
-          <p>0</p>
+          <p>{{ playerStats.points }}</p>
         </div>
         <div class="stat">
           <h2>RPG</h2>
-          <p>0</p>
+          <p>{{ playerStats.rebounds }}</p>
         </div>
         <div class="stat">
           <h2>APG</h2>
-          <p>0</p>
+          <p>{{ playerStats.assists }}</p>
         </div>
       </div>
       <div class="follow">
@@ -61,15 +57,69 @@
         </button>
       </div>
     </section>
-    <div v-else class="loader"></div>
+
+    <section class="player-stats">
+      <h2>{{ playerStats.season }} - {{ playerStats.season + 1 }} Season Stats</h2>
+      <table>
+        <tr>
+          <th>GP</th>
+          <th>MIN</th>
+          <th>PPG</th>
+          <th>RPG</th>
+          <th>APG</th>
+          <th>FGM</th>
+          <th>FGA</th>
+          <th>FG%</th>
+          <th>3PM</th>
+          <th>3PA</th>
+          <th>3P%</th>
+          <th>SPG</th>
+          <th>BPG</th>
+          <th>TO</th>
+          <th>ORB</th>
+          <th>DRB</th>
+          <th>FTM</th>
+          <th>FTA</th>
+          <th>FT%</th>
+          <th>PF</th>
+        </tr>
+        <tr>
+          <td>{{ playerStats.gamesPlayed }}</td>
+          <td>{{ playerStats.minutes }}</td>
+          <td>{{ playerStats.points }}</td>
+          <td>{{ playerStats.rebounds }}</td>
+          <td>{{ playerStats.assists }}</td>
+          <td>{{ playerStats.fieldGoalsMade }}</td>
+          <td>{{ playerStats.fieldGoalsAttempted }}</td>
+          <td>{{ playerStats.fieldGoalsPercentage }}</td>
+          <td>{{ playerStats.threePointersMade }}</td>
+          <td>{{ playerStats.threePointersAttempted }}</td>
+          <td>{{ playerStats.threePointersPercentage }}</td>
+          <td>{{ playerStats.steals }}</td>
+          <td>{{ playerStats.blocks }}</td>
+          <td>{{ playerStats.turnovers }}</td>
+          <td>{{ playerStats.offensiveRebounds }}</td>
+          <td>{{ playerStats.defensiveRebounds }}</td>
+          <td>{{ playerStats.freeThrowsMade }}</td>
+          <td>{{ playerStats.freeThrowsAttempted }}</td>
+          <td>{{ playerStats.freeThrowsPercentage }}</td>
+          <td>{{ playerStats.fouls }}</td>
+        </tr>
+      </table>
+    </section>
   </main>
+  <div v-else class="loader"></div>
 </template>
 
 <script setup lang="ts">
 import AppHeader from '../components/AppHeader.vue'
 import { computed, ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { fetchAndSavePlayerInfo, getTeamInfoFromDb } from '../util/NbaApi'
+import {
+  fetchAndSavePlayerInfo,
+  getTeamInfoFromDb,
+  fetchAndSavePlayerSeasonAvg
+} from '../util/NbaApi'
 import { convertPosition } from '../util/NbaUtil'
 
 interface PlayerInfo {
@@ -81,10 +131,36 @@ interface PlayerInfo {
   playerPhoto: string
 }
 
+interface PlayerStats {
+  playerId: number
+  season: number
+  gamesPlayed: number
+  minutes: number
+  points: number
+  rebounds: number
+  offensiveRebounds: number
+  defensiveRebounds: number
+  assists: number
+  blocks: number
+  steals: number
+  turnovers: number
+  fieldGoalsAttempted: number
+  fieldGoalsMade: number
+  fieldGoalsPercentage: number
+  threePointersAttempted: number
+  threePointersMade: number
+  threePointersPercentage: number
+  freeThrowsAttempted: number
+  freeThrowsMade: number
+  freeThrowsPercentage: number
+  fouls: number
+}
+
 const route = useRoute()
 
 const playerInfo = ref<PlayerInfo>()
 const playerTeamInfo = ref()
+const playerStats = ref<PlayerStats>()
 
 const playerId = computed(() => {
   // If the gameId is an array, return the first element as a number
@@ -97,6 +173,7 @@ const playerId = computed(() => {
 
 onMounted(() => {
   fetchPlayer()
+  fetchPlayerStats()
 })
 
 const fetchPlayer = async () => {
@@ -105,12 +182,22 @@ const fetchPlayer = async () => {
   if (playerInfo.value) {
     const fetchPlayerTeamInfo = await getTeamInfoFromDb(playerInfo.value.teamName)
     playerTeamInfo.value = fetchPlayerTeamInfo
-    console.log(playerTeamInfo.value)
   }
+}
+
+const fetchPlayerStats = async () => {
+  setTimeout(async () => {
+    const fetchedPlayerStats = await fetchAndSavePlayerSeasonAvg(playerId.value, 2022)
+    playerStats.value = fetchedPlayerStats
+    console.log(playerStats.value)
+  }, 1000)
 }
 </script>
 
 <style scoped>
+.loader {
+  margin: 0 auto;
+}
 .player-profile {
   display: flex;
   padding: 20px;
@@ -139,7 +226,7 @@ const fetchPlayer = async () => {
 }
 
 .player-name h1 {
-  line-height: 0.8;
+  line-height: 1;
 }
 
 .follow {
@@ -181,5 +268,44 @@ const fetchPlayer = async () => {
 .stat p {
   font-weight: 600;
   font-size: 1.2rem;
+}
+
+.player-stats {
+  margin-top: 2rem;
+  background-color: white;
+  color: black;
+  border-radius: 15px;
+  padding: 1rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.player-stats h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+table th,
+table td {
+  padding: 0.5rem 1rem;
+  text-align: center;
+}
+
+table th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table tr:hover {
+  background-color: #ddd;
 }
 </style>
