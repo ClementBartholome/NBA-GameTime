@@ -10,7 +10,7 @@ namespace backend.Models
             // Initialize the context 
         }
 
-        // Allows querying and interacting with the 'Games' table in the database.
+        // Allows querying and interacting with the tables in the database.
         public DbSet<Game> Games { get; set; }
         public DbSet<Team> Teams { get; set; }
         public DbSet<Standings> Standings { get; set; }

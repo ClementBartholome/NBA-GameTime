@@ -229,6 +229,63 @@ export async function getCorrectBoxScore(gameID: any) {
     // Handle the error or return an empty array if needed
     return []
   }
+  /* {
+    "data": [
+        {
+            "id": 12644890,
+            "ast": 0,
+            "blk": 0,
+            "dreb": 3,
+            "fg3_pct": 0.167,
+            "fg3a": 6,
+            "fg3m": 1,
+            "fg_pct": 0.111,
+            "fga": 9,
+            "fgm": 1,
+            "ft_pct": 0.5,
+            "fta": 2,
+            "ftm": 1,
+            "game": {
+                "id": 858114,
+                "date": "2023-01-30T00:00:00.000Z",
+                "home_team_id": 24,
+                "home_team_score": 114,
+                "period": 4,
+                "postseason": false,
+                "season": 2022,
+                "status": "Final",
+                "time": "Final",
+                "visitor_team_id": 28,
+                "visitor_team_score": 106
+            },
+            "min": "26",
+            "oreb": 0,
+            "pf": 1,
+            "player": {
+                "id": 666679,
+                "first_name": "Cameron",
+                "height_feet": null,
+                "height_inches": null,
+                "last_name": "Johnson",
+                "position": "F",
+                "team_id": 3,
+                "weight_pounds": null
+            },
+            "pts": 4,
+            "reb": 3,
+            "stl": 2,
+            "team": {
+                "id": 24,
+                "abbreviation": "PHX",
+                "city": "Phoenix",
+                "conference": "West",
+                "division": "Pacific",
+                "full_name": "Phoenix Suns",
+                "name": "Suns"
+            },
+            "turnover": 0
+        }, 
+  */
 }
 
 export async function getBoxScores(currentDate: string) {

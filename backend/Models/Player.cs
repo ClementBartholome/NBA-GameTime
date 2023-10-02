@@ -10,11 +10,10 @@ public class Player
     public string LastName { get; set; }
     public string Position { get; set; }
 
-
     [ForeignKey("Team")]
     public string TeamName { get; set; }
 
-    public Team Team { get; set; }
+    public Team? Team { get; set; }
 
     public Player() {
         PlayerId = 0;
