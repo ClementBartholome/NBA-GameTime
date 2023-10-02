@@ -31,6 +31,10 @@
           <h2>APG</h2>
           <p>{{ playerStats.assists }}</p>
         </div>
+        <div class="stat">
+          <h2>FG%</h2>
+          <p>{{ playerStats.fieldGoalsPercentage }}</p>
+        </div>
       </div>
       <div class="follow">
         <button>
