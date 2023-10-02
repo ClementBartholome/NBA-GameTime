@@ -9,6 +9,7 @@ public class Player
     public string FirstName { get; set; }
     public string LastName { get; set; }
     public string Position { get; set; }
+    public string PlayerPhoto { get; set; }
 
     [ForeignKey("Team")]
     public string TeamName { get; set; }
@@ -20,5 +21,6 @@ public class Player
         FirstName = "";
         LastName = "";
         Position = "";
+        PlayerPhoto = "";
     }
 }

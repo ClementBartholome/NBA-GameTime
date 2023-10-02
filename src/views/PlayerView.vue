@@ -1,12 +1,13 @@
 <template>
   <AppHeader />
   <main>
-    <div v-if="playerInfo">
+    <section class="player-profile" v-if="playerInfo">
       <h1>{{ playerInfo.firstName }} {{ playerInfo.lastName }}</h1>
       <p>{{ playerInfo.position }}</p>
       <p>{{ playerInfo.teamName }}</p>
       <img :src="playerTeamInfo.logo" alt="" />
-    </div>
+      <img :src="playerInfo.playerPhoto" alt="" />
+    </section>
     <div v-else>Loading player information...</div>
   </main>
 </template>
@@ -23,6 +24,7 @@ interface PlayerInfo {
   lastName: string
   position: string
   teamName: string
+  playerPhoto: string
 }
 
 const route = useRoute()
@@ -53,3 +55,5 @@ const fetchPlayer = async () => {
   }
 }
 </script>
+
+<style scoped></style>
