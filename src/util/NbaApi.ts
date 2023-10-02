@@ -208,7 +208,7 @@ export async function getStandingsFromDb(season: number) {
 export async function fetchAndSavePlayerInfo(playerId: number) {
   const existingPlayer = await getPlayerInfoFromDb(playerId)
 
-  if (existingPlayer.Id) {
+  if (existingPlayer.id) {
     return existingPlayer
   }
   try {
