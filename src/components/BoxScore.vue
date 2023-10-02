@@ -4,7 +4,9 @@
       <div class="team-header">
         <img :src="homeTeamInfo.logo" alt="Team Logo" />
         <h2>{{ homeTeamInfo.teamName }}</h2>
-        <span>{{ homeTeamScore }}</span>
+        <span :class="{ 'winning-score': homeTeamScore > awayTeamScore, score: true }">{{
+          homeTeamScore
+        }}</span>
       </div>
       <div class="table-container">
         <table>
@@ -44,7 +46,9 @@
     </div>
     <div class="team">
       <div class="team-header">
-        <span>{{ awayTeamScore }}</span>
+        <span :class="{ score: true, 'winning-score': awayTeamScore > homeTeamScore }">{{
+          awayTeamScore
+        }}</span>
         <h2>{{ visitorTeamInfo.teamName }}</h2>
         <img :src="visitorTeamInfo.logo" alt="Team logo" />
       </div>
@@ -222,6 +226,22 @@ const visitorTeamInfo = computed(() => {
   background-color: #e0ffe0; /* Light green for starters */
 }
 
+.score {
+  background: white;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 2.5rem;
+  width: 4rem;
+  text-align: center;
+  font-weight: bold;
+}
+
+.winning-score {
+  background: black;
+  color: white;
+}
+
 .box-score {
   display: flex;
   justify-content: space-between;
@@ -292,6 +312,9 @@ table th {
 
   .team {
     margin-bottom: 20px;
+  }
+  .team:last-of-type .team-header {
+    flex-direction: row-reverse;
   }
 }
 
