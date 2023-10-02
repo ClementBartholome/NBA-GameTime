@@ -2,33 +2,38 @@ using System;
 using System.ComponentModel.DataAnnotations; 
 using System.ComponentModel.DataAnnotations.Schema; 
 
+[Table("players_season_averages")]
 public class PlayerSeasonAverages
 {
     public int Id { get; set; }
     public int PlayerId { get; set; }
 
-    public int Minutes { get; set; }
-    public int Points { get; set; }
-    public int Rebounds { get; set; }
-    public int OffensiveRebounds { get; set; }
-    public int DefensiveRebounds { get; set; }
-    public int Assists { get; set; }
-    public int Blocks { get; set; }
-    public int Steals { get; set; }
-    public int Turnovers { get; set; }
-    public int FieldGoalsAttempted { get; set; }
-    public int FieldGoalsMade { get; set; }
-    public int FieldGoalsPercentage { get; set; }
-    public int ThreePointersAttempted { get; set; }
-    public int ThreePointersMade { get; set; }
-    public int ThreePointersPercentage { get; set; }
-    public int FreeThrowsAttempted { get; set; }
-    public int FreeThrowsMade { get; set; }
-    public int FreeThrowsPercentage { get; set; }
-    public int Fouls { get; set; }
+    public int Season { get; set; }
+    public int GamesPlayed { get; set; }
+    public decimal Minutes { get; set; }
+    public decimal Points { get; set; }
+    public decimal Rebounds { get; set; }
+    public decimal OffensiveRebounds { get; set; }
+    public decimal DefensiveRebounds { get; set; }
+    public decimal Assists { get; set; }
+    public decimal Blocks { get; set; }
+    public decimal Steals { get; set; }
+    public decimal Turnovers { get; set; }
+    public decimal FieldGoalsAttempted { get; set; }
+    public decimal FieldGoalsMade { get; set; }
+    public decimal FieldGoalsPercentage { get; set; }
+    public decimal ThreePointersAttempted { get; set; }
+    public decimal ThreePointersMade { get; set; }
+    public decimal ThreePointersPercentage { get; set; }
+    public decimal FreeThrowsAttempted { get; set; }
+    public decimal FreeThrowsMade { get; set; }
+    public decimal FreeThrowsPercentage { get; set; }
+    public decimal Fouls { get; set; }
 
     public PlayerSeasonAverages() {
         PlayerId = 0;
+        Season = 0;
+        GamesPlayed = 0;
         Minutes = 0;
         Points = 0;
         Rebounds = 0;
