@@ -4,18 +4,22 @@ using backend.Models;
 
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add the NbaDbContext to the service collection with the connection string from appsettings.json
 builder.Services.AddDbContext<NbaDbContext>(options =>
     options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"), new MySqlServerVersion(new Version(8, 0, 34))));
-// Add services to the container.
 
+// Add controllers as services to the container
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+// Add API Explorer for endpoint discovery
 builder.Services.AddEndpointsApiExplorer();
+
+// Add Swagger documentation generation to the service collection
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -26,14 +30,16 @@ if (app.Environment.IsDevelopment())
 app.UseCors(options =>
 {
     options.WithOrigins("http://localhost:5173") 
-           .AllowAnyHeader()
-           .AllowAnyMethod();
+           .AllowAnyHeader()                      
+           .AllowAnyMethod();                     
 });
 
 app.UseHttpsRedirection();
 
+// Enable authorization handling
 app.UseAuthorization();
 
+// Map controllers to their respective routes
 app.MapControllers();
 
 app.Run();
