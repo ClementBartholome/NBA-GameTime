@@ -223,7 +223,6 @@ export async function fetchAndSavePlayerInfo(playerId: number) {
       teamName: fetchedPlayer.team.name,
       playerPhoto: playerPhoto
     }
-    console.log(playerInfo)
     await axios.post('http://localhost:5068/api/players', playerInfo, {
       headers: {
         'Content-Type': 'application/json'
@@ -233,34 +232,27 @@ export async function fetchAndSavePlayerInfo(playerId: number) {
   } catch (error) {
     console.error('Error fetching player info:', error)
   }
-
-  // Return an empty array if no standings data is found or an error occurs
   return []
 }
 
 export async function getPlayerPhoto(playerLastName: string, playerFirstName: string) {
   try {
-    // Check if the data is already in the localStorage
     const storedInfo = localStorage.getItem('players_full_list')
 
     if (storedInfo) {
       const playersData = JSON.parse(storedInfo)
-
-      // Find the player in the stored data
       const fetchedPlayer = playersData.find(
         (p: any) => p.LastName === playerLastName && p.FirstName === playerFirstName
       )
 
       if (fetchedPlayer) {
-        return fetchedPlayer.PhotoUrl
+        return fetchedPlayer.PhotoUrl || 'https://us.v-cdn.net/6022045/uploads/defaultavatar.png'
       }
     } else {
-      // If the data is not in the localStorage, fetch it from the API
       const response = await axios.get(
         `https://api.sportsdata.io/v3/nba/scores/json/Players?key=${apiKey}`
       )
 
-      // Store the data in the localStorage
       localStorage.setItem('players_full_list', JSON.stringify(response.data))
 
       if (Array.isArray(response.data) && response.data.length > 0) {
@@ -269,12 +261,17 @@ export async function getPlayerPhoto(playerLastName: string, playerFirstName: st
         )
 
         if (fetchedPlayer) {
-          return fetchedPlayer.PhotoUrl
+          return fetchedPlayer.PhotoUrl || 'https://us.v-cdn.net/6022045/uploads/defaultavatar.png'
         }
       }
     }
+
+    // If no player photo is found, return the generic URL
+    return 'https://us.v-cdn.net/6022045/uploads/defaultavatar.png'
   } catch (error) {
     console.error('Error fetching player photo:', error)
+    // If an error occurs, return the generic URL
+    return 'https://us.v-cdn.net/6022045/uploads/defaultavatar.png'
   }
 }
 

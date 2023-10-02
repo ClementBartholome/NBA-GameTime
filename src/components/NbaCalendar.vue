@@ -242,29 +242,4 @@ section.calendar {
     max-width: 600px;
   }
 }
-
-/* Loader */
-
-.loader {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background-color: #db5b34;
-  position: relative;
-  animation: bouncy-loader 0.6s infinite alternate;
-}
-@keyframes bouncy-loader {
-  0% {
-    top: 0;
-  }
-  33% {
-    top: 20px;
-  }
-  66% {
-    top: 0;
-  }
-  100% {
-    top: 20px;
-  }
-}
 </style>

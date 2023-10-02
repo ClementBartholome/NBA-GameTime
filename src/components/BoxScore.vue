@@ -97,6 +97,7 @@
 
 <script setup lang="ts">
 import { useTeamStore } from '../stores/TeamsStore'
+import { convertTeamName } from '../util/NbaUtil'
 import { getCorrectBoxScore } from '../util/NbaApi'
 import { computed, ref, onMounted } from 'vue'
 
@@ -171,24 +172,6 @@ const fetchBoxScore = async () => {
   awayTeam.value.forEach((player) => {
     player.min = player.min < 10 ? player.min.slice(1) : player.min
   })
-}
-
-// Convert team abbreviations to match the ones used in the box score
-const convertTeamName = (teamName: any) => {
-  switch (teamName) {
-    case 'PHO':
-      return 'PHX'
-    case 'NY':
-      return 'NYK'
-    case 'GS':
-      return 'GSW'
-    case 'NO':
-      return 'NOP'
-    case 'SA':
-      return 'SAS'
-    default:
-      return teamName
-  }
 }
 
 // const homeTeamPlayers = computed(() =>
