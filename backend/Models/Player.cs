@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Player 
 {
-    public int id { get; set; }
+    public int Id { get; set; }
     public int PlayerId { get; set; }
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -14,7 +14,6 @@ public class Player
     [ForeignKey("Team")]
     public string TeamName { get; set; }
 
-    public Team? Team { get; set; }
 
     public Player() {
         PlayerId = 0;
