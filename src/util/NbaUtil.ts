@@ -1,20 +1,3 @@
-export function getSingleBoxScore(
-  gamesData: any,
-  homeTeamName: string | string[],
-  awayTeamName: string | string[]
-) {
-  // Filter method to find the game that matches the home and away team names
-  const filteredGames = gamesData.filter((game: any) => {
-    // console.log(game)
-    return (
-      (game.Game.HomeTeam === homeTeamName && game.Game.AwayTeam === awayTeamName) ||
-      (game.Game.HomeTeam === awayTeamName && game.Game.AwayTeam === homeTeamName)
-    )
-  })
-
-  return filteredGames
-}
-
 // Convert team abbreviations to match the ones used in the box score
 export function convertTeamName(teamName: string) {
   switch (teamName) {

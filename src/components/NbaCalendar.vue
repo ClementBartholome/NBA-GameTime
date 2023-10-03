@@ -42,14 +42,14 @@ import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
 import { ref, onMounted, watch, computed } from 'vue'
-import { fetchAndSaveGames, getGamesFromDb, getBoxScores } from '../util/NbaApi'
-import { useGamesStore } from '../stores/GamesStore'
+import { fetchAndSaveGames, getGamesFromDb, getBoxScoresByDate } from '../util/NbaApi'
 
 const games = ref([] as any[]) // Date for the games
 const currentDate = ref('2023-05-09') // Base date
 const selectedWeek = ref([] as string[]) // Days of the week that is selected
 const showCalendar = ref(false) // Show the calendar or not
 const loading = ref(false) // Loading state
+const gamesBoxScores = ref([] as any[]) // Box scores for the games
 
 // Format the date to display it in the date picker
 const formattedDate = computed(() => {
@@ -65,9 +65,9 @@ const currentMonth = computed(() => {
   return dateObj.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
 })
 
-const gamesBoxScores = computed(() => {
-  return useGamesStore().gamesBoxScores
-})
+// const gamesBoxScores = computed(() => {
+//   return useGamesStore().gamesBoxScores
+// })
 
 // On component mount, fetch the games, update the selected week and the games box scores
 onMounted(() => {
@@ -101,8 +101,8 @@ const updateGames = async () => {
 
 // Fetch NBA games box scores for the given date and store them
 const updateGamesBoxScores = async (date: string) => {
-  const fetchedGamesBoxScores = await getBoxScores(date)
-  useGamesStore().setGamesBoxScores(fetchedGamesBoxScores)
+  const fetchedGamesBoxScores = await getBoxScoresByDate(date)
+  gamesBoxScores.value = fetchedGamesBoxScores
 }
 
 // Update the selected week based on the current date

@@ -199,6 +199,9 @@ const fetchPlayerStats = async () => {
 </script>
 
 <style scoped>
+main {
+  padding: 20px;
+}
 .loader {
   margin: 0 auto;
 }
@@ -254,6 +257,7 @@ const fetchPlayerStats = async () => {
 .averages {
   display: flex;
   gap: 2rem;
+  width: 23%;
 }
 .stat {
   padding: 10px;
@@ -261,7 +265,7 @@ const fetchPlayerStats = async () => {
   border: 2px solid white;
   border-radius: 5px;
   text-align: center;
-  width: 80px;
+  width: 25%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -281,6 +285,7 @@ const fetchPlayerStats = async () => {
   border-radius: 15px;
   padding: 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  overflow: scroll;
 }
 
 .player-stats h2 {
@@ -298,6 +303,7 @@ table th,
 table td {
   padding: 0.5rem 1rem;
   text-align: center;
+  border: 1px solid black;
 }
 
 table th {
@@ -309,7 +315,6 @@ table tr:nth-child(even) {
   background-color: #f2f2f2;
 }
 
-table tr:hover {
-  background-color: #ddd;
+@media (max-width: 1024px) {
 }
 </style>

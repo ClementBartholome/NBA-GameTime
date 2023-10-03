@@ -350,31 +350,7 @@ export async function getPlayerSeasonAvgFromDb(playerId: number, season: number)
  **
  */
 
-export async function getCorrectBoxScore(gameID: any) {
-  try {
-    const storedInfo = localStorage.getItem(`boxscore_${gameID}`)
-
-    if (storedInfo) {
-      return JSON.parse(storedInfo)
-    } else {
-      const response = await axios.get(
-        `https://www.balldontlie.io/api/v1/stats?game_ids[]=${gameID}&per_page=40`
-      )
-
-      if (Array.isArray(response.data.data) && response.data.data.length > 0) {
-        const boxScore = response.data.data
-        // console.log(boxScore)
-        localStorage.setItem(`boxscore_${gameID}`, JSON.stringify(boxScore))
-        return boxScore
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching NBA box scores:', error)
-    return []
-  }
-}
-
-export async function getBoxScores(currentDate: string) {
+export async function getBoxScoresByDate(currentDate: string) {
   try {
     const storedInfo = localStorage.getItem(`boxscores_${currentDate}`)
 
@@ -418,4 +394,28 @@ export async function getBoxScores(currentDate: string) {
 
   // Return an empty array if no box scores data is found
   return []
+}
+
+export async function getBoxScoreByGameId(gameID: any) {
+  try {
+    const storedInfo = localStorage.getItem(`boxscore_${gameID}`)
+
+    if (storedInfo) {
+      return JSON.parse(storedInfo)
+    } else {
+      const response = await axios.get(
+        `https://www.balldontlie.io/api/v1/stats?game_ids[]=${gameID}&per_page=40`
+      )
+
+      if (Array.isArray(response.data.data) && response.data.data.length > 0) {
+        const boxScore = response.data.data
+        // console.log(boxScore)
+        localStorage.setItem(`boxscore_${gameID}`, JSON.stringify(boxScore))
+        return boxScore
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching NBA box scores:', error)
+    return []
+  }
 }
