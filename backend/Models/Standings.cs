@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 public class Standings
 {
-    public int id { get; set; }
+    public int Id { get; set; }
     public int Season { get; set; }
     public string City { get; set; }
     public string Name { get; set; }
