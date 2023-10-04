@@ -44,7 +44,7 @@ import GameCard from './GameCard.vue'
 import { ref, onMounted, watch, computed } from 'vue'
 import { fetchAndSaveGames, getGamesFromDb, getBoxScoresByDate } from '../util/NbaApi'
 
-const games = ref([] as any[]) // Date for the games
+const games = ref([] as any[]) // Games for the selected date
 const currentDate = ref('2023-05-09') // Base date
 const selectedWeek = ref([] as string[]) // Days of the week that is selected
 const showCalendar = ref(false) // Show the calendar or not

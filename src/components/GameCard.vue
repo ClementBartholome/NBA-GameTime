@@ -1,5 +1,5 @@
 <template>
-  <router-link :to="'/boxscore/' + gameID + `-` + homeTeamName + `-` + visitorTeamName">
+  <router-link :to="'/boxscore/' + gameId + `-` + homeTeamName + `-` + visitorTeamName">
     <div class="game-card" v-if="game">
       <div class="home-team" :style="{ backgroundColor: homeTeamColor }">
         <img :src="homeTeamLogo" alt="Home team logo" />
@@ -41,7 +41,7 @@ const homeTeamLogo = ref('')
 const visitorTeamLogo = ref('')
 const homeTeamColor = ref('')
 const visitorTeamColor = ref('')
-const gameID = ref(0)
+const gameId = ref(0)
 
 const teamStore = useTeamStore()
 
@@ -62,24 +62,22 @@ onMounted(async () => {
     visitorTeamLogo.value = visitorTeamInfo.logo
     visitorTeamColor.value = '#' + visitorTeamInfo.primaryColor
 
-    const correctBoxScore = await getBoxScoreByGameId(props.game.gameId)
-    // console.log(correctBoxScore)
+    const singleBoxScore = await getBoxScoreByGameId(props.game.gameId)
+    // console.log(singleBoxScore)
 
-    gameID.value = correctBoxScore[0].game.id
+    gameId.value = singleBoxScore[0].game.id
 
-    const existingTeamInfo = teamStore.teamsInfo.find((info) => info.gameId === gameID.value)
+    // Check if the game teams info already exists in the store
+    const existingTeamInfo = teamStore.teamsInfo.find((info) => info.gameId === gameId.value)
 
-    // If it doesn't exist, add it to the store
+    // If it doesn't exist, associate the teams information with the game and add it to the store
     if (!existingTeamInfo) {
       const teamInfo = {
-        gameId: gameID.value,
+        gameId: gameId.value,
         homeTeamInfo,
         visitorTeamInfo
       }
-
-      // Add team information to the store
       teamStore.addTeamInfo(teamInfo)
-      // console.log(teamStore.teamsInfo)
     }
   }
 })

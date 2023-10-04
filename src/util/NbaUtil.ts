@@ -16,6 +16,7 @@ export function convertTeamName(teamName: string) {
   }
 }
 
+// Convert position abbreviations to full position names
 export function convertPosition(position: string) {
   switch (position) {
     case 'G':

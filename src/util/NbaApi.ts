@@ -31,7 +31,7 @@ export async function fetchAndSaveGames(currentDate: string) {
   }
 
   const transformedGamesData = fetchedGames.map((game) => ({
-    gameId: game.id,
+    GameId: game.id,
     homeTeamName: game.home_team.name,
     homeTeamFullName: game.home_team.full_name,
     visitorTeamName: game.visitor_team.name,
@@ -370,7 +370,7 @@ export async function getBoxScoresByDate(currentDate: string) {
           Game: {
             HomeTeam: boxScore.Game.HomeTeam,
             AwayTeam: boxScore.Game.AwayTeam,
-            GameID: boxScore.Game.GameID
+            GameId: boxScore.Game.GameId
           },
           PlayerGames: boxScore.PlayerGames.map((playerGame: any) => ({
             Name: playerGame.Name,
@@ -401,7 +401,11 @@ export async function getBoxScoreByGameId(gameID: any) {
     const storedInfo = localStorage.getItem(`boxscore_${gameID}`)
 
     if (storedInfo) {
-      return JSON.parse(storedInfo)
+      const boxScore = JSON.parse(storedInfo)
+      boxScore.forEach((player: any) => {
+        player.min = parseInt(player.min, 10) // Convert min to number
+      })
+      return boxScore
     } else {
       const response = await axios.get(
         `https://www.balldontlie.io/api/v1/stats?game_ids[]=${gameID}&per_page=40`
@@ -409,7 +413,10 @@ export async function getBoxScoreByGameId(gameID: any) {
 
       if (Array.isArray(response.data.data) && response.data.data.length > 0) {
         const boxScore = response.data.data
-        // console.log(boxScore)
+        console.log(boxScore)
+        boxScore.forEach((player: any) => {
+          player.min = parseInt(player.min, 10) // Convert min to number
+        })
         localStorage.setItem(`boxscore_${gameID}`, JSON.stringify(boxScore))
         return boxScore
       }

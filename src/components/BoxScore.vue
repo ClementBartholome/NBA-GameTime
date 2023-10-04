@@ -94,7 +94,7 @@ interface BoxScore {
   pts: number
   reb: number
   ast: number
-  min: string
+  min: number
   team: {
     abbreviation: string
   }
@@ -119,14 +119,20 @@ onMounted(async () => {
 const fetchBoxScore = async () => {
   const boxScoreData = await getBoxScoreByGameId(props.gameId)
   boxScore.value = boxScoreData
+  console.log(boxScore.value)
+
+  // Check if props.homeTeamName and props.visitorTeamName are defined
+  const homeTeamName = props.homeTeamName || '' // Provide a default value if it's undefined
+  const visitorTeamName = props.visitorTeamName || '' // Provide a default value if it's undefined
 
   // Get home team players from the boxScore
   homeTeam.value = boxScore.value.filter(
-    (player) => player.team.abbreviation === convertTeamName(props.homeTeamName)
+    (player) => player.team.abbreviation === convertTeamName(homeTeamName)
   )
+
   // Get away team players from the boxScore
   awayTeam.value = boxScore.value.filter(
-    (player) => player.team.abbreviation === convertTeamName(props.visitorTeamName)
+    (player) => player.team.abbreviation === convertTeamName(visitorTeamName)
   )
 
   homeTeamScore.value = homeTeam.value[0].game.home_team_score
@@ -136,6 +142,7 @@ const fetchBoxScore = async () => {
   homeTeam.value.sort((a, b) => b.min - a.min)
   awayTeam.value.sort((a, b) => b.min - a.min)
 
+  // Remove the leading zero for minutes played < 10
   homeTeam.value.forEach((player) => {
     player.min = player.min < 10 ? player.min.slice(1) : player.min
   })
@@ -146,13 +153,15 @@ const fetchBoxScore = async () => {
 }
 
 const teamStore = useTeamStore()
-
+// Convert gameId to a number
 const gameIdNumber = parseInt(props.gameId || '0', 10)
+// Get this game homeTeamInfo from the store
 const homeTeamInfo = computed(() => {
   const teamInfo = teamStore.getTeamInfo(gameIdNumber)
   return teamInfo ? teamInfo.homeTeamInfo : null
 })
 
+// Get this game visitorTeamInfo from the store
 const visitorTeamInfo = computed(() => {
   const teamInfo = teamStore.getTeamInfo(gameIdNumber)
   return teamInfo ? teamInfo.visitorTeamInfo : null

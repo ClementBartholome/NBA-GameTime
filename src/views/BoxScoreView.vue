@@ -15,6 +15,7 @@ const route = useRoute()
 
 const gameId = computed(() => {
   // If the gameId is an array, return the first element
+  // gameId = string | string[]
   return Array.isArray(route.params.gameId) ? route.params.gameId[0] : route.params.gameId
 })
 
