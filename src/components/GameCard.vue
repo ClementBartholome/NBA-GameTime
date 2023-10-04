@@ -65,7 +65,9 @@ onMounted(async () => {
     const singleBoxScore = await getBoxScoreByGameId(props.game.gameId)
     // console.log(singleBoxScore)
 
-    gameId.value = singleBoxScore[0].game.id
+    if (singleBoxScore) {
+      gameId.value = singleBoxScore[0].game.id
+    }
 
     // Check if the game teams info already exists in the store
     const existingTeamInfo = teamStore.teamsInfo.find((info) => info.gameId === gameId.value)

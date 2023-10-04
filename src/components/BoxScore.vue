@@ -1,5 +1,5 @@
 <template>
-  <div class="box-score">
+  <div v-if="boxScore" class="box-score">
     <div class="team">
       <div class="team-header">
         <img :src="homeTeamInfo.logo" alt="Team Logo" />
@@ -73,6 +73,7 @@
       </div>
     </div>
   </div>
+  <div v-else><h2>Games has not started yet</h2></div>
 </template>
 
 <script setup lang="ts">
