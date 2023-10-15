@@ -13,14 +13,14 @@
         readonly
         style="display: none"
       />
-      <calendar-picker
+      <CalendarPicker
         v-if="showCalendar"
         :currentDate="currentDate"
         @select="selectDate"
-      ></calendar-picker>
+      ></CalendarPicker>
     </div>
 
-    <date-picker
+    <DatePicker
       :formatted-date="formattedDate"
       :selectedWeek="selectedWeek"
       @selectDay="selectDay"
@@ -51,12 +51,23 @@ const showCalendar = ref(false) // Show the calendar or not
 const loading = ref(false) // Loading state
 const gamesBoxScores = ref([] as any[]) // Box scores for the games
 
+// On component mount, fetch the games, update the selected week and the games box scores
+onMounted(() => {
+  updateGames()
+  updateSelectedWeek()
+  updateGamesBoxScores(currentDate.value)
+})
+
 // Format the date to display it in the date picker
 const formattedDate = computed(() => {
+  // Get the current date from the reactive variable 'currentDate'
   const dateObj = new Date(currentDate.value)
+  // Get the short name of the day of the week (e.g., 'Mon', 'Tue')
   const dayOfWeek = dateObj.toLocaleDateString('en-US', { weekday: 'short' })
+  // Get the day of the month (e.g., 9, 10)
   const dayOfMonth = dateObj.getDate()
-  return `${dayOfWeek} ${dayOfMonth}` // = Mon 9, for example
+  // Return the formatted date, combining day of the week and day of the month
+  return `${dayOfWeek} ${dayOfMonth}` // e.g., 'Mon 9', 'Tue 10'...
 })
 
 // Format the date to display it next to the calendar picker
@@ -68,13 +79,6 @@ const currentMonth = computed(() => {
 // const gamesBoxScores = computed(() => {
 //   return useGamesStore().gamesBoxScores
 // })
-
-// On component mount, fetch the games, update the selected week and the games box scores
-onMounted(() => {
-  updateGames()
-  updateSelectedWeek()
-  updateGamesBoxScores(currentDate.value)
-})
 
 // Watch for changes in the current date and update the games
 watch(currentDate, (newDate, oldDate) => {

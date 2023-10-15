@@ -286,6 +286,11 @@ export async function getPlayerInfoFromDb(playerId: number) {
   }
 }
 
+/* PLAYER SEASON AVG DATA
+ **
+ **
+ */
+
 export async function fetchAndSavePlayerSeasonAvg(playerId: number, season: number) {
   const existingStats = await getPlayerSeasonAvgFromDb(playerId, season)
   if (existingStats.id) {
