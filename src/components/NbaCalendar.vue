@@ -45,7 +45,7 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { fetchAndSaveGames, getGamesFromDb, getBoxScoresByDate } from '../util/NbaApi'
 
 const games = ref([] as any[]) // Games for the selected date
-const currentDate = ref('2023-05-09') // Base date
+const currentDate = ref(new Date().toISOString().split('T')[0]) // Base date
 const selectedWeek = ref([] as string[]) // Days of the week that is selected
 const showCalendar = ref(false) // Show the calendar or not
 const loading = ref(false) // Loading state
