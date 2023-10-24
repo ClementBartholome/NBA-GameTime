@@ -73,7 +73,7 @@
       </div>
     </div>
   </div>
-  <div v-else><h2>Games has not started yet</h2></div>
+  <div v-else><h2>The game has not started yet</h2></div>
 </template>
 
 <script setup lang="ts">
