@@ -51,6 +51,45 @@ export async function fetchAndSaveGames(currentDate: string) {
   return transformedGamesData
 }
 
+export async function updateGamesScores(currentDate: string) {
+  const intervalMs = 20000
+
+  setInterval(async () => {
+    const response = await axios.get('https://www.balldontlie.io/api/v1/games', {
+      params: {
+        start_date: currentDate,
+        end_date: currentDate
+      }
+    })
+
+    const fetchedGames = response.data.data as any[]
+
+    if (fetchedGames && fetchedGames.length > 0) {
+      for (const game of fetchedGames) {
+        const gameData = {
+          GameId: game.id,
+          homeTeamScore: game.home_team_score,
+          visitorTeamScore: game.visitor_team_score
+        }
+
+        await updateGameScoreInDatabase(game.id, gameData)
+      }
+    }
+  }, intervalMs)
+}
+
+const updateGameScoreInDatabase = async (gameId: number, gameScoreUpdate: any) => {
+  try {
+    const response = await axios.put(
+      `http://localhost:5068/api/games/updateGameScore/${gameId}`,
+      gameScoreUpdate
+    )
+    console.log(response)
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour du score du match : ', error)
+  }
+}
+
 export async function getGamesFromDb(currentDate: string) {
   try {
     const response = await axios.get(
@@ -401,7 +440,7 @@ export async function getBoxScoresByDate(currentDate: string) {
   return []
 }
 
-export async function getBoxScoreByGameId(gameID: any) {
+export async function getBoxScoreByGameId(gameID: number) {
   try {
     const storedInfo = localStorage.getItem(`boxscore_${gameID}`)
 
@@ -418,7 +457,7 @@ export async function getBoxScoreByGameId(gameID: any) {
 
       if (Array.isArray(response.data.data) && response.data.data.length > 0) {
         const boxScore = response.data.data
-        console.log(boxScore)
+        // console.log(boxScore)
         boxScore.forEach((player: any) => {
           player.min = parseInt(player.min, 10) // Convert min to number
         })
