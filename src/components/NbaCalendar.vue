@@ -42,7 +42,12 @@ import DatePicker from './DatePicker.vue'
 import CalendarPicker from './CalendarPicker.vue'
 import GameCard from './GameCard.vue'
 import { ref, onMounted, watch, computed } from 'vue'
-import { fetchAndSaveGames, getGamesFromDb, getBoxScoresByDate } from '../util/NbaApi'
+import {
+  fetchAndSaveGames,
+  getGamesFromDb,
+  getBoxScoresByDate,
+  updateGamesScores
+} from '../util/NbaApi'
 
 const games = ref([] as any[]) // Games for the selected date
 const currentDate = ref(new Date().toISOString().split('T')[0]) // Base date
@@ -56,6 +61,7 @@ onMounted(() => {
   updateGames()
   updateSelectedWeek()
   updateGamesBoxScores(currentDate.value)
+  updateGamesScores(currentDate.value)
 })
 
 // Format the date to display it in the date picker
@@ -85,6 +91,7 @@ watch(currentDate, (newDate, oldDate) => {
   if (newDate !== oldDate) {
     updateGames()
     updateGamesBoxScores(newDate)
+    updateGamesScores(newDate)
   }
 })
 
